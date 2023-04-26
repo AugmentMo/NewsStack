@@ -1,25 +1,21 @@
+var newsfeeds = {};
 
-console.log("request news")
 
-socket.emit("getnews", "haptics");
-
-socket.on('newsfeeditem', (feed) => {
-    // Handle news data here
-    console.log("received item: ", feed)
-    const container = document.getElementById('news-container-haptics');
+function addItemToFeed(feed, item) {
+    const container = document.getElementById('news-container-'+feed);
 
     const title = document.createElement('p');
     title.classList.add("card-title");
-    title.innerHTML = feed.title;
+    title.innerHTML = item.title;
 
     const description = document.createElement('p');
     description.classList.add("font-weight-500")
-    description.innerHTML = feed.metadescr;
+    description.innerHTML = item.metadescr;
 
     const url = document.createElement('a');
     url.classList.add("font-weight-500")
     url.innerHTML = 'Read more';
-    url.href = feed.linkurl;
+    url.href = item.linkurl;
     url.target = '_blank';
 
     const imageContainer = document.createElement('div');
@@ -27,8 +23,8 @@ socket.on('newsfeeditem', (feed) => {
     imageContainer.classList.add('d-flex');
     // imageContainer.classList.add('justify-content-end');
     imageContainer.classList.add('align-self-center');
-    if (feed.imagesrc != undefined) {
-    imageContainer.innerHTML = '<img src="' + feed.imagesrc + '" alt="' + feed.title + '" style="width: 100px; height: 100px;">';
+    if (item.imagesrc != undefined) {
+    imageContainer.innerHTML = '<img src="' + item.imagesrc + '" alt="' + item.title + '" style="width: 100px; height: 100px;">';
     }
 
     const textContainer = document.createElement('div');
@@ -51,7 +47,7 @@ socket.on('newsfeeditem', (feed) => {
 
 
     const feedElement = document.createElement('p');
-    feedElement.href = feed.linkurl;
+    feedElement.href = item.linkurl;
     feedElement.target = '_blank';
     feedElement.classList.add('card');
     feedElement.classList.add('m-2');
@@ -63,4 +59,49 @@ socket.on('newsfeeditem', (feed) => {
 
     container.appendChild(feedElement);
 
+}
+
+function updateNewsFeedsDisplay() {
+    for (const newsfeedname in newsfeeds) {
+        var newsfeed = newsfeeds[newsfeedname];
+
+        // sort news feed
+        newsfeed.sort((a, b) => {
+            return (a.itemnumber < b.itemnumber ? -1 : 1);
+        });
+
+        // clear news feeds
+        const container = document.getElementById('news-container-'+newsfeedname);
+        container.innerHTML = "";
+
+        // add each item
+        for (const newsfeeditem of newsfeed) { 
+            addItemToFeed(newsfeedname, newsfeeditem)
+        }
+    }
+}
+
+function addNewFeed(feedname) {
+    newsfeeds[feedname] = []
+}
+
+function addNewFeedItem(item) {
+    // add item and sort
+    const newsfeedname = item.newscolumn;
+    newsfeeds[newsfeedname].push(item);
+}
+
+function requestNewsFeeds() {
+    for (const newsfeed in newsfeeds) {
+        socket.emit("getnews", newsfeed);
+    }
+}
+
+socket.on('newsfeeditem', (item) => {
+    addNewFeedItem(item);
+    updateNewsFeedsDisplay();
 });
+
+
+addNewFeed("haptics");
+requestNewsFeeds();
