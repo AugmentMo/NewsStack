@@ -18,6 +18,8 @@
     "jsdom": "^21.1.1",
     "node-fetch": "^2.6.9",
     "sharp": "^0.32.0",
+    "simple.io": "^0.0.1-security",
+    "socket.io": "^4.6.1",
     "xmldom": "^0.6.0"
   }
 }
