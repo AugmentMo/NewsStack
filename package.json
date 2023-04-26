@@ -1,0 +1,23 @@
+{
+  "name": "newsfeed",
+  "version": "1.0.0",
+  "description": "Personalised Newsfeeds",
+  "main": "index.js",
+  "scripts": {
+    "start": "node --experimental-modules index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "newsfeed"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "jsdom": "^21.1.1",
+    "node-fetch": "^2.6.9",
+    "sharp": "^0.32.0",
+    "xmldom": "^0.6.0"
+  }
+}
