@@ -1,8 +1,8 @@
 var newsfeeds = {};
 
 
-function addItemToFeed(feed, item) {
-    const container = document.getElementById('news-container-'+feed);
+function addItemToFeed(feedid, item) {
+    const container = document.getElementById('newsfeeditems-'+feedid);
 
     const title = document.createElement('p');
     title.classList.add("card-title");
@@ -17,6 +17,10 @@ function addItemToFeed(feed, item) {
     url.innerHTML = 'Read more';
     url.href = item.linkurl;
     url.target = '_blank';
+
+    const pubdate = document.createElement('p');
+    pubdate.classList.add("font-weight-500")
+    pubdate.innerHTML = item.pubdate;
 
     const imageContainer = document.createElement('div');
     imageContainer.classList.add('col');
@@ -38,6 +42,7 @@ function addItemToFeed(feed, item) {
     cardBodyElement.appendChild(title);
     cardBodyElement.appendChild(description);
     cardBodyElement.appendChild(url);
+    cardBodyElement.appendChild(pubdate);
 
     textContainer.appendChild(cardBodyElement);
 
@@ -51,6 +56,7 @@ function addItemToFeed(feed, item) {
     feedElement.target = '_blank';
     feedElement.classList.add('card');
     feedElement.classList.add('m-2');
+    feedElement.classList.add('feeditem');
 
     rowElement.appendChild(textContainer);
     rowElement.appendChild(imageContainer);
@@ -62,8 +68,8 @@ function addItemToFeed(feed, item) {
 }
 
 function updateNewsFeedsDisplay() {
-    for (const newsfeedname in newsfeeds) {
-        var newsfeed = newsfeeds[newsfeedname];
+    for (const feedid in newsfeeds) {
+        var newsfeed = newsfeeds[feedid]["feeditems"];
 
         // sort news feed
         newsfeed.sort((a, b) => {
@@ -71,29 +77,33 @@ function updateNewsFeedsDisplay() {
         });
 
         // clear news feeds
-        const container = document.getElementById('news-container-'+newsfeedname);
+        const container = document.getElementById('newsfeeditems-'+feedid);
         container.innerHTML = "";
 
         // add each item
-        for (const newsfeeditem of newsfeed) { 
-            addItemToFeed(newsfeedname, newsfeeditem)
+        for (const feeditem of newsfeed) { 
+            addItemToFeed(feedid, feeditem)
         }
     }
 }
 
-function addNewFeed(feedname) {
-    newsfeeds[feedname] = []
+function addNewFeed(feedtitle, feedid, feedkeywordstr) {
+    newsfeeds[feedid] = { "feedtitle": feedtitle, "feedkeywordstr": feedkeywordstr, "feeditems": [] }
+    
+    const container = document.getElementById('news-container');
+    container.innerHTML += '<div id="newsfeed-'+feedid+'" class="col grid-margin feedcolumn"><h4>'+feedtitle+'</h4><div id="newsfeeditems-'+feedid+'"></div></div>';
+    
 }
 
 function addNewFeedItem(item) {
     // add item and sort
-    const newsfeedname = item.newscolumn;
-    newsfeeds[newsfeedname].push(item);
+    const feedid = item.feedid;
+    newsfeeds[feedid]["feeditems"].push(item);
 }
 
 function requestNewsFeeds() {
-    for (const newsfeed in newsfeeds) {
-        socket.emit("getnews", newsfeed);
+    for (const feedid in newsfeeds) {
+        socket.emit("getnews", {"feedid": feedid, "feedkeywordstr": newsfeeds[feedid]["feedkeywordstr"]});
     }
 }
 
@@ -103,5 +113,9 @@ socket.on('newsfeeditem', (item) => {
 });
 
 
-addNewFeed("haptics");
+addNewFeed("Haptics", "haptics", "haptics");
+addNewFeed("New Zealand Politics", "nzpolitics", "Politics+New+Zealand");
+addNewFeed("Europe Politics", "eupolitics", "Politics+Europe");
+addNewFeed("German Politics", "depolitics", "Politics+Germany");
+
 requestNewsFeeds();

@@ -14,16 +14,16 @@ const io = new Server(server);
 
 io.on("connection", (socket) => {
     console.log("socket connected")
-    socket.on("getnews", (newscolumn) => {
+    socket.on("getnews", (newsfeed) => {
         console.log("news request")
-        collectNews(socket, newscolumn)
+        collectNews(socket, newsfeed)
     });
 });
   
 
-function collectNews(socket, newscolumn) {
-    console.log(newscolumn)
-    const url = 'https://news.google.com/rss/search?q='+newscolumn+'&hl=en-NZ&gl=NZ&ceid=NZ:en';
+function collectNews(socket, newsfeed) {
+    console.log(newsfeed)
+    const url = 'https://news.google.com/rss/search?q='+newsfeed["feedkeywordstr"]+'&hl=en-NZ&gl=NZ&ceid=NZ:en';
     fetch(url)
       .then(response => response.text())
       .then(async data => {
@@ -40,8 +40,9 @@ function collectNews(socket, newscolumn) {
                 
     
             //////
-            var imagesrc = ""
-            var metadescr = ""
+            var imagesrc = "";
+            var metadescr = "";
+            var pubdate = "";
                 getMetaFeedData(linkurl)
                 .then(metadata => {
                     if (metadata != undefined) {
@@ -51,6 +52,9 @@ function collectNews(socket, newscolumn) {
                         if (metadata["m_url"]) {
                             linkurl = metadata["m_url"]
                         }
+                        if (metadata["m_pubdate"]) {
+                            pubdate = metadata["m_pubdate"]
+                        }
                         if (metadata["m_img"]) {
                             return fetchAndCropImage(metadata["m_img"]);
                         }
@@ -58,10 +62,14 @@ function collectNews(socket, newscolumn) {
                 })
                 .then(imagedata => {
                     imagesrc = imagedata
-            
-                    const feeditem = { itemnumber, newscolumn, title, description, linkurl, metadescr, imagesrc }
-                    socket.emit('newsfeeditem', feeditem);
-                }).catch(error => console.log("could not fetch"));
+                }).catch(error => console.log("could not fetch"))
+                    .finally(status => { 
+                        console.log("status", status)
+                        const feedid = newsfeed["feedid"]
+                        const feeditem = { itemnumber, feedid, title, description, linkurl, metadescr, imagesrc, pubdate }
+                        socket.emit('newsfeeditem', feeditem);
+        
+              })
     
         }
         

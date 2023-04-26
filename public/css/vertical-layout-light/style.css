@@ -28433,12 +28433,23 @@ div.tagsinput span.tag a {
 
 .main-panel {
   transition: width 0.25s ease, margin 0.25s ease;
-  width: calc(100% - 235px);
+  /* width: calc(100% - 235px); */
+  width: 100%;
   min-height: calc(100vh - 60px);
   display: -webkit-flex;
   display: flex;
   -webkit-flex-direction: column;
   flex-direction: column;
+}
+
+.feedcolumn {
+  width: auto;
+  display: inline-block;
+}
+
+.feeditem {
+  width: 500px;
+  white-space: pre-wrap;
 }
 
 @media (max-width: 991px) {
