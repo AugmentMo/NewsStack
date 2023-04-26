@@ -22,49 +22,49 @@ io.on("connection", (socket) => {
   
 
 function collectNews(socket, newscolumn) {
-    const url = 'https://news.google.com/rss/search?q=haptics&hl=en-NZ&gl=NZ&ceid=NZ:en';
+    console.log(newscolumn)
+    const url = 'https://news.google.com/rss/search?q='+newscolumn+'&hl=en-NZ&gl=NZ&ceid=NZ:en';
     fetch(url)
       .then(response => response.text())
       .then(async data => {
         const parser = new DOMParser();
         const xml = parser.parseFromString(data, 'text/xml');
         const items = xml.getElementsByTagName('item');
-          const feeds = [];
-          const maxitem = 1; //items.length;
-        for (let i = 0; i < maxitem; i++) {
-          const title = items[i].getElementsByTagName('title')[0].textContent;
-          const description = items[i].getElementsByTagName('description')[0].textContent;
-          var linkurl = items[i].getElementsByTagName('link')[0].textContent;
+          const maxitem = 5; //items.length;
+
+          for (let i = 0; i < maxitem; i++) {
+            const itemnumber = i;
+            const title = items[i].getElementsByTagName('title')[0].textContent;
+            const description = items[i].getElementsByTagName('description')[0].textContent;
+            var linkurl = items[i].getElementsByTagName('link')[0].textContent;
+                
+    
+            //////
+            var imagesrc = ""
+            var metadescr = ""
+                getMetaFeedData(linkurl)
+                .then(metadata => {
+                    if (metadata != undefined) {
+                        if (metadata["m_description"]) {
+                            metadescr = metadata["m_description"]
+                        }
+                        if (metadata["m_url"]) {
+                            linkurl = metadata["m_url"]
+                        }
+                        if (metadata["m_img"]) {
+                            return fetchAndCropImage(metadata["m_img"]);
+                        }
+                    }
+                })
+                .then(imagedata => {
+                    imagesrc = imagedata
             
-  
-          //////
-          var imagesrc = ""
-          var metadescr = ""
-          await getMetaFeedData(linkurl)
-              .then(metadata => {
-                  if (metadata != undefined) {
-                      if (metadata["m_description"]) {
-                          metadescr = metadata["m_description"]
-                      }
-                      if (metadata["m_url"]) {
-                          linkurl = metadata["m_url"]
-                      }
-                      if (metadata["m_img"]) {
-                          return fetchAndCropImage(metadata["m_img"]);
-                      }
-                  }
-              })
-              .then(imagedata => {imagesrc = imagedata}).catch(error => console.log("could not fetch"));
-          // await getNewsFeedImage(linkurl).then(imagedata => {imagesrc = imagedata}).catch(error => console.log("could not fetch"));
-          //////
-  
-          feeds.push({ title, description, linkurl, metadescr, imagesrc });
+                    const feeditem = { itemnumber, newscolumn, title, description, linkurl, metadescr, imagesrc }
+                    socket.emit('newsfeeditem', feeditem);
+                }).catch(error => console.log("could not fetch"));
+    
         }
         
-        for (const feeditem of feeds) {
-            socket.emit('newsfeeditem', feeditem);
-        }
-
       })
       .catch(error => {
         console.log(error);

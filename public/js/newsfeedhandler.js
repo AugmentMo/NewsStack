@@ -1,7 +1,7 @@
 
 console.log("request news")
 
-socket.emit("getnews");
+socket.emit("getnews", "haptics");
 
 socket.on('newsfeeditem', (feed) => {
     // Handle news data here
