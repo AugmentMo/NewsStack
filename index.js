@@ -3,84 +3,49 @@ const fetch = require('node-fetch');
 const { DOMParser } = require('xmldom');
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
+const { getNewsFeedImage, getMetaFeedData, fetchAndCropImage } = require('./fetchtest');
 
 const app = express();
-
-
-function fetchImageData(url) {
-
-    fetch(url)
-    .then(response => response.text())
-    .then(data => {
-        var resurl =""
-        const regex = /<a href="(.*?)"/;
-        const match = data.match(regex);
-        if (match) {
-            resurl = match[1];
-        } else {
-            console.log('No URL found in HTML');
-        }
-
-        console.log(resurl)
-        fetch(resurl)
-        .then(response => response.text())
-        .then(html => {
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(html, 'text/html');
-            const title = doc.querySelector('title').innerText;
-            const description = doc.querySelector('meta[name="description"]').getAttribute('content');
-            const img = doc.querySelector('meta[name="image"]').getAttribute('content');
-            
-            console.log('Title:', title);
-            console.log('Description:', description);
-            console.log('Img:', img);
-        })
-    })
-    .catch(error => console.error(error));
-
-}
-
-function getMetaData(resurl) {
-    console.log(resurl)
-    fetch(resurl)
-    .then(response => response.text())
-    .then(html => {
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, 'text/html');
-        const title = doc.querySelector('title').innerText;
-        const description = doc.querySelector('meta[name="description"]').getAttribute('content');
-        const img = doc.querySelector('meta[name="image"]').getAttribute('content');
-        
-        console.log('Title:', title);
-        console.log('Description:', description);
-        console.log('Img:', img);
-    })
-    
-  
-}
 
 // Define a route to retrieve the news feeds
 app.get('/news', (req, res) => {
   const url = 'https://news.google.com/rss/search?q=haptics&hl=en-NZ&gl=NZ&ceid=NZ:en';
   fetch(url)
     .then(response => response.text())
-    .then(data => {
+    .then(async data => {
       const parser = new DOMParser();
       const xml = parser.parseFromString(data, 'text/xml');
       const items = xml.getElementsByTagName('item');
-      const feeds = [];
-      for (let i = 0; i < items.length; i++) {
+        const feeds = [];
+        const maxitem = 5; //items.length;
+      for (let i = 0; i < maxitem; i++) {
         const title = items[i].getElementsByTagName('title')[0].textContent;
         const description = items[i].getElementsByTagName('description')[0].textContent;
-        const linkurl = items[i].getElementsByTagName('link')[0].textContent;
+        var linkurl = items[i].getElementsByTagName('link')[0].textContent;
           
 
         //////
-        fetchImageData(linkurl)
-        
+        var imagesrc = ""
+        var metadescr = ""
+        await getMetaFeedData(linkurl)
+            .then(metadata => {
+                if (metadata != undefined) {
+                    if (metadata["m_description"]) {
+                        metadescr = metadata["m_description"]
+                    }
+                    if (metadata["m_url"]) {
+                        linkurl = metadata["m_url"]
+                    }
+                    if (metadata["m_img"]) {
+                        return fetchAndCropImage(metadata["m_img"]);
+                    }
+                }
+            })
+            .then(imagedata => {imagesrc = imagedata}).catch(error => console.log("could not fetch"));
+        // await getNewsFeedImage(linkurl).then(imagedata => {imagesrc = imagedata}).catch(error => console.log("could not fetch"));
         //////
 
-        feeds.push({ title, description, linkurl, imgdata });
+        feeds.push({ title, description, linkurl, metadescr, imagesrc });
       }
       res.json(feeds);
     })

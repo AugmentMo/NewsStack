@@ -36,20 +36,27 @@ function queryMetaElement(doc, str, prop) {
 }
 
 function fetchRedirectLink(url) {
-    fetch(url)
+    return fetch(url)
     .then(response => response.text())
     .then(data => {
-        var resurl =""
+        var resurl = undefined
         const regex = /<a href="(.*?)"/;
         const match = data.match(regex);
         if (match) {
             resurl = match[1];
+            console.log(resurl)
         } else {
             console.log('No URL found in HTML');
         }
 
-        console.log(resurl)
-        fetch(resurl)
+        return resurl
+    })
+    .catch(error => console.error(error));
+
+}
+
+function fetchMetaData(url) {
+    return fetch(url)
         .then(response => response.text())
             .then(html => {
             const dom = new JSDOM(html, { includeNodeLocations: true });
@@ -79,29 +86,64 @@ function fetchRedirectLink(url) {
                 const m_ogdescription = queryMetaElement(doc, description_meta_property_query_str, "property");
                 const m_pubdate = queryMetaElement(doc, pubdate_meta_property_query_str, "property");
                 
-                console.log("m_img_twitter", m_img_twitter)
-                console.log("m_tags", m_tags)
-                console.log("m_description", m_description)
-                console.log("m_keywords", m_keywords)
-                console.log("m_img", m_img)
-                console.log("m_type", m_type)
-                console.log("m_sitename", m_sitename)
-                console.log("m_title", m_title)
-                console.log("m_ogdescription", m_ogdescription)
-                console.log("m_pubdate", m_pubdate)
-
-                fetchAndCropImage(m_img)
-                .then(croppedImgDataUrl => {
-                console.log(croppedImgDataUrl); // use this data URL for further processing
-                });
-            
+                var metadata = {
+                "m_img_twitter" : m_img_twitter,
+                "m_tags" : m_tags,
+                "m_description" : m_description,
+                "m_keywords" : m_keywords,
+                "m_img" : m_img,
+                "m_type" : m_type,
+                "m_sitename" : m_sitename,
+                "m_title" : m_title,
+                "m_ogdescription" : m_ogdescription,
+                "m_pubdate": m_pubdate,
+                "m_url": url
+                }
+                // console.log(metadata)
+                return metadata;
         })
-    })
-    .catch(error => console.error(error));
-
 }
 
+async function getNewsFeedImage(googlenewslink) {
+    return fetchRedirectLink(googlenewslink)
+        .then(redirectedlink => {
+            if (redirectedlink != undefined) {
+                return fetchMetaData(redirectedlink);
+            }
+            else {
+                return undefined;
+            }    
+        })
+        .then(metadata => {
+            if (metadata != undefined) {
+                if (metadata["m_img"]) {
+                    return fetchAndCropImage(metadata["m_img"]);
+                }
+                else {
+                    return undefined
+                } 
+            }
+            else {
+                return undefined;
+            }
+        })
+    
+}
 
-// fetchRedirectLink(url)
+async function getMetaFeedData(googlenewslink) {
+    return fetchRedirectLink(googlenewslink)
+        .then(redirectedlink => {
+            if (redirectedlink != undefined) {
+                return fetchMetaData(redirectedlink);
+            }
+            else {
+                return undefined;
+            }    
+        })
+}
 
-module.exports = { fetchMetaData };
+// getNewsFeedImage(url).then(metadat => {
+//     console.log(" I got ", metadat)
+// })
+
+module.exports = { getNewsFeedImage, getMetaFeedData, fetchAndCropImage };
