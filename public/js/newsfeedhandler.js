@@ -1,13 +1,26 @@
 var newsfeeds = {};
 var newsSources = {"googlenewsrss": "Google News (RSS Feed)"}
 
+function generateRandomString(strlen) {
+    let randomString = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  
+    for (let i = 0; i < strlen; i++) {
+      randomString += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+  
+    return randomString;
+  }
+  
 function generateStackID(text) {
     // Replace all whitespace characters with an empty string
     const noWhitespace = text.replace(/\s/g, '');
     // Convert all characters to lowercase
     const lowercaseText = noWhitespace.toLowerCase();
+    // Generate 16 char random string
+    const randomString = generateRandomString(16);
     // Return the resulting string
-    return lowercaseText;
+    return lowercaseText+"-"+randomString;
   }
 
 function getFormattedDate(dateString) {
