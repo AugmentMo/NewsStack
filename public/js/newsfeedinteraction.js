@@ -12,7 +12,7 @@ $("#addnewsstackbtn").on("click", (event) => {
 
     <label for="news-source">News Source:</label><br>
     <select id="news-source">
-        <option value="google-news">Google News (RSS Feed)</option>
+        <option value="googlenewsrss">`+newsSources["googlenewsrss"]+`</option>
     </select>
 
     <br><br>
@@ -32,10 +32,21 @@ $("#addnewsstackbtn").on("click", (event) => {
         }
         },
         ok: {
-        label: "OK",
+        label: "Add",
         className: 'btn-dark',
         callback: function() {
             console.log('Custom OK clicked');
+            const stackTitle = $('#stack-title').val();
+            const newsSource = $('#news-source').val();
+            const keywordString = $('#keyword-string').val();
+            const stackID = generateStackID(stackTitle);
+            // Log the values to the console
+            console.log(`Stack Title: ${stackTitle}`);
+            console.log(`News Source: ${newsSource}`);
+            console.log(`Keyword String: ${keywordString}`);
+            addNewFeed(stackTitle, stackID, keywordString, newsSource);
+            requestNewsFeed(stackID);
+            updateNewsFeedsDisplay();
         }
         }
         }

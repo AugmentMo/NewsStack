@@ -1,4 +1,14 @@
 var newsfeeds = {};
+var newsSources = {"googlenewsrss": "Google News (RSS Feed)"}
+
+function generateStackID(text) {
+    // Replace all whitespace characters with an empty string
+    const noWhitespace = text.replace(/\s/g, '');
+    // Convert all characters to lowercase
+    const lowercaseText = noWhitespace.toLowerCase();
+    // Return the resulting string
+    return lowercaseText;
+  }
 
 function getFormattedDate(dateString) {
     const date = new Date(dateString);
@@ -108,8 +118,8 @@ function updateNewsFeedsDisplay() {
     registerButtonEventListener();
 }
 
-function addNewFeed(feedtitle, feedid, feedkeywordstr) {
-    newsfeeds[feedid] = { "feedtitle": feedtitle, "feedkeywordstr": feedkeywordstr, "feeditems": [] }
+function addNewFeed(feedtitle, feedid, feedkeywordstr, newssource) {
+    newsfeeds[feedid] = { "feedtitle": feedtitle, "feedkeywordstr": feedkeywordstr, "newssource": newssource, "feeditems": [] }
 }
 
 function htmlAddFeed(feedid) {
@@ -145,9 +155,13 @@ function addNewFeedItem(item) {
     newsfeeds[feedid]["feeditems"].push(item);
 }
 
+function requestNewsFeed(feedid) {
+    socket.emit("getnews", {"feedid": feedid, "feedkeywordstr": newsfeeds[feedid]["feedkeywordstr"]});
+}
+
 function requestNewsFeeds() {
     for (const feedid in newsfeeds) {
-        socket.emit("getnews", {"feedid": feedid, "feedkeywordstr": newsfeeds[feedid]["feedkeywordstr"]});
+        requestNewsFeed(feedid);
     }
 }
 
@@ -156,7 +170,7 @@ socket.on('newsfeeditem', (item) => {
     updateNewsFeedsDisplay();
 });
 
-
+// Default example feeds
 addNewFeed("Elon Musk", "elonmusk", "Elon+Musk");
 addNewFeed("Artificial Intelligence", "artificialintelligence", "Artificial+Intelligence");
 addNewFeed("Stock Market", "stockmarket", "Stock+Market");
