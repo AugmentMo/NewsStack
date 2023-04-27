@@ -123,6 +123,15 @@ function addNewFeed(feedtitle, feedid, feedkeywordstr, newssource) {
     saveSessionData();
 }
 
+function updateFeed(feedid, feedtitle, feedkeywordstr, newssource, feeditems = null) {
+    var newfeeditems = newsfeeds[feedid]["feeditems"];
+    if (feeditems != null) {
+        newfeeditems = feeditems;
+    }
+    newsfeeds[feedid] = { "feedtitle": feedtitle, "feedkeywordstr": feedkeywordstr, "newssource": newssource, "feeditems": newfeeditems }
+    saveSessionData();
+}
+
 function htmlAddFeed(feedid) {
     const feedtitle = newsfeeds[feedid]["feedtitle"];
     

@@ -55,6 +55,9 @@ $("#addnewsstackbtn").on("click", (event) => {
 
 
 function registerButtonEventListener() {
+
+    // Register trash button click event listener
+    // Allows deleting stacks
     $(".btn-newscol-trash").on("click", (event) => {
         event.stopPropagation();
         event.stopImmediatePropagation();
@@ -89,4 +92,68 @@ function registerButtonEventListener() {
             }
             });
     });
+
+    // Register settings button click event listener
+    // Allows modifying stack settings
+
+    $(".btn-newscol-settings").on("click", (event) => {
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+        const stackid = $(event.currentTarget).attr('data-stack-id');
+        var stackTitle = newsfeeds[stackid]["feedtitle"]
+        var newsSource = newsfeeds[stackid]["newssource"]
+        var keywordString = newsfeeds[stackid]["feedkeywordstr"]
+        
+
+        let dialog = bootbox.dialog({
+            title: 'Stack Settings',
+            message: `
+    <div>
+        <label for="stack-title">Stack Title:</label><br>
+        <input type="text" id="stack-title" value="`+stackTitle+`">
+    
+        <br><br>
+    
+        <label for="news-source">News Source:</label><br>
+        <select id="news-source">
+            <option value="googlenewsrss" selected>`+newsSources["googlenewsrss"]+`</option>
+        </select>
+    
+        <br><br>
+    
+        <label for="keyword-string">Keyword String:</label><br>
+        <input type="text" id="keyword-string" value="`+keywordString+`">
+    </div>
+    
+            `,
+            size: 'medium',
+            buttons: {
+            cancel: {
+            label: "Cancel",
+            className: 'btn-outline-dark',
+            callback: function(){
+            console.log('Custom cancel clicked');
+            }
+            },
+            ok: {
+            label: "Save",
+            className: 'btn-dark',
+            callback: function() {
+                console.log('Custom OK clicked');
+                stackTitle = $('#stack-title').val();
+                newsSource = $('#news-source').val();
+                keywordString = $('#keyword-string').val();
+                // Log the values to the console
+                console.log(`Stack Title: ${stackTitle}`);
+                console.log(`News Source: ${newsSource}`);
+                console.log(`Keyword String: ${keywordString}`);
+                updateFeed(stackid, stackTitle, keywordString, newsSource, []);
+                requestNewsFeed(stackid);
+                updateNewsFeedsDisplay();
+            }
+            }
+            }
+            });
+    });
+    
 }
