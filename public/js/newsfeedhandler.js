@@ -80,7 +80,14 @@ function addItemToFeed(feedid, item) {
 
 }
 
+function clearNewsContainer() {
+    const container = document.getElementById('news-container');
+    container.innerHTML = "";
+}
+
 function updateNewsFeedsDisplay() {
+    clearNewsContainer();
+
     for (const feedid in newsfeeds) {
         var newsfeed = newsfeeds[feedid]["feeditems"];
 
@@ -89,31 +96,36 @@ function updateNewsFeedsDisplay() {
             return (a.itemnumber < b.itemnumber ? -1 : 1);
         });
 
-        // clear news feeds
-        const container = document.getElementById('newsfeeditems-'+feedid);
-        container.innerHTML = "";
+        // add news feed column to html
+        htmlAddFeed(feedid);
 
         // add each item
         for (const feeditem of newsfeed) { 
             addItemToFeed(feedid, feeditem)
         }
     }
+
+    registerButtonEventListener();
 }
 
 function addNewFeed(feedtitle, feedid, feedkeywordstr) {
     newsfeeds[feedid] = { "feedtitle": feedtitle, "feedkeywordstr": feedkeywordstr, "feeditems": [] }
+}
+
+function htmlAddFeed(feedid) {
+    const feedtitle = newsfeeds[feedid]["feedtitle"];
     
     const container = document.getElementById('news-container');
-    // container.innerHTML += '<div id="newsfeed-'+feedid+'" class="col grid-margin feedcolumn"><h3 style="padding-left: 1.25rem;">'+feedtitle+'</h3><div id="newsfeeditems-'+feedid+'"></div></div>';
+
     container.innerHTML += `
     <div id="newsfeed-`+feedid+`" class="col grid-margin feedcolumn">
         <div style="display: flex; justify-content: space-between; align-items: center; padding-left: 1.25rem; padding-right: 1.25rem;">
             <h3 style="margin: 0;">`+feedtitle+`</h3>
             <div style="display: flex; align-items: center;">
-                <button id="newsfeed-settingsbtn-`+feedid+`" type="button" class="btn btn-newscol btn-rounded btn-icon" style="margin-right: 0.5rem;">
+                <button data-stack-id="`+feedid+`" type="button" class="btn btn-newscol btn-newscol-settings btn-rounded btn-icon" style="margin-right: 0.5rem;">
                     <i class="ti-settings text-dark"></i>
                 </button>
-                <button id="newsfeed-trashbtn-`+feedid+`" type="button" class="btn btn-newscol btn-rounded btn-icon">
+                <button data-stack-id="`+feedid+`" type="button" class="btn btn-newscol btn-newscol-trash btn-rounded btn-icon">
                     <i class="ti-trash text-dark"></i>
                 </button>
             </div>
@@ -121,6 +133,10 @@ function addNewFeed(feedtitle, feedid, feedkeywordstr) {
         <div id="newsfeeditems-`+feedid+`"></div>
     </div>
     `
+}
+
+function deleteFeed(feedid) {
+    delete newsfeeds[feedid];
 }
 
 function addNewFeedItem(item) {
