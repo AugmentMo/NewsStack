@@ -104,8 +104,23 @@ function addNewFeed(feedtitle, feedid, feedkeywordstr) {
     newsfeeds[feedid] = { "feedtitle": feedtitle, "feedkeywordstr": feedkeywordstr, "feeditems": [] }
     
     const container = document.getElementById('news-container');
-    container.innerHTML += '<div id="newsfeed-'+feedid+'" class="col grid-margin feedcolumn"><h4>'+feedtitle+'</h4><div id="newsfeeditems-'+feedid+'"></div></div>';
-    
+    // container.innerHTML += '<div id="newsfeed-'+feedid+'" class="col grid-margin feedcolumn"><h3 style="padding-left: 1.25rem;">'+feedtitle+'</h3><div id="newsfeeditems-'+feedid+'"></div></div>';
+    container.innerHTML += `
+    <div id="newsfeed-`+feedid+`" class="col grid-margin feedcolumn">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding-left: 1.25rem; padding-right: 1.25rem;">
+            <h3 style="margin: 0;">`+feedtitle+`</h3>
+            <div style="display: flex; align-items: center;">
+                <button id="newsfeed-settingsbtn-`+feedid+`" type="button" class="btn btn-newscol btn-rounded btn-icon" style="margin-right: 0.5rem;">
+                    <i class="ti-settings text-dark"></i>
+                </button>
+                <button id="newsfeed-trashbtn-`+feedid+`" type="button" class="btn btn-newscol btn-rounded btn-icon">
+                    <i class="ti-trash text-dark"></i>
+                </button>
+            </div>
+        </div>
+        <div id="newsfeeditems-`+feedid+`"></div>
+    </div>
+    `
 }
 
 function addNewFeedItem(item) {
@@ -126,9 +141,9 @@ socket.on('newsfeeditem', (item) => {
 });
 
 
-addNewFeed("Haptics", "haptics", "haptics");
-addNewFeed("New Zealand Politics", "nzpolitics", "Politics+New+Zealand");
-addNewFeed("Europe Politics", "eupolitics", "Politics+Europe");
-addNewFeed("German Politics", "depolitics", "Politics+Germany");
+addNewFeed("Elon Musk", "elonmusk", "Elon+Musk");
+addNewFeed("Artificial Intelligence", "artificialintelligence", "Artificial+Intelligence");
+addNewFeed("Stock Market", "stockmarket", "Stock+Market");
+addNewFeed("World Politics", "worldpolitics", "World+Politics");
 
 requestNewsFeeds();
