@@ -120,6 +120,7 @@ function updateNewsFeedsDisplay() {
 
 function addNewFeed(feedtitle, feedid, feedkeywordstr, newssource) {
     newsfeeds[feedid] = { "feedtitle": feedtitle, "feedkeywordstr": feedkeywordstr, "newssource": newssource, "feeditems": [] }
+    saveSessionData();
 }
 
 function htmlAddFeed(feedid) {
@@ -147,6 +148,7 @@ function htmlAddFeed(feedid) {
 
 function deleteFeed(feedid) {
     delete newsfeeds[feedid];
+    saveSessionData();
 }
 
 function addNewFeedItem(item) {
@@ -170,10 +172,3 @@ socket.on('newsfeeditem', (item) => {
     updateNewsFeedsDisplay();
 });
 
-// Default example feeds
-addNewFeed("Elon Musk", "elonmusk", "Elon+Musk");
-addNewFeed("Artificial Intelligence", "artificialintelligence", "Artificial+Intelligence");
-addNewFeed("Stock Market", "stockmarket", "Stock+Market");
-addNewFeed("World Politics", "worldpolitics", "World+Politics");
-
-requestNewsFeeds();
