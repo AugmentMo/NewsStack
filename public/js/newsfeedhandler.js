@@ -1,5 +1,18 @@
 var newsfeeds = {};
 
+function getFormattedDate(dateString) {
+    const date = new Date(dateString);
+
+    // Format the date string in a nice format
+    const formattedDate = date.toLocaleDateString("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric"
+    });
+
+    return formattedDate;
+}
 
 function addItemToFeed(feedid, item) {
     const container = document.getElementById('newsfeeditems-'+feedid);
@@ -20,7 +33,7 @@ function addItemToFeed(feedid, item) {
 
     const pubdate = document.createElement('p');
     pubdate.classList.add("font-weight-500")
-    pubdate.innerHTML = item.pubdate;
+    pubdate.innerHTML = getFormattedDate(item.pubdate);
 
     const imageContainer = document.createElement('div');
     imageContainer.classList.add('col');
@@ -41,7 +54,7 @@ function addItemToFeed(feedid, item) {
 
     cardBodyElement.appendChild(title);
     cardBodyElement.appendChild(description);
-    cardBodyElement.appendChild(url);
+    // cardBodyElement.appendChild(url);
     cardBodyElement.appendChild(pubdate);
 
     textContainer.appendChild(cardBodyElement);
@@ -51,7 +64,7 @@ function addItemToFeed(feedid, item) {
     rowElement.classList.add('justify-content-between');
 
 
-    const feedElement = document.createElement('p');
+    const feedElement = document.createElement('a');
     feedElement.href = item.linkurl;
     feedElement.target = '_blank';
     feedElement.classList.add('card');
