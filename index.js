@@ -30,19 +30,19 @@ function collectNews(socket, newsfeed) {
         const parser = new DOMParser();
         const xml = parser.parseFromString(data, 'text/xml');
         const items = xml.getElementsByTagName('item');
-          const maxitem = 5; //items.length;
+          const maxitem = 10; //items.length;
 
           for (let i = 0; i < maxitem; i++) {
-            const itemnumber = i;
-            const title = items[i].getElementsByTagName('title')[0].textContent;
-            const description = items[i].getElementsByTagName('description')[0].textContent;
-            var linkurl = items[i].getElementsByTagName('link')[0].textContent;
+            let itemnumber = i;
+            let title = items[i].getElementsByTagName('title')[0].textContent;
+            let description = items[i].getElementsByTagName('description')[0].textContent;
+            let linkurl = items[i].getElementsByTagName('link')[0].textContent;
                 
     
             //////
-            var imagesrc = "";
-            var metadescr = "";
-            var pubdate = "";
+            let imagesrc = "";
+            let metadescr = "";
+            let pubdate = "";
                 getMetaFeedData(linkurl)
                 .then(metadata => {
                     if (metadata != undefined) {
@@ -61,15 +61,12 @@ function collectNews(socket, newsfeed) {
                     }
                 })
                 .then(imagedata => {
-                    imagesrc = imagedata
-                }).catch(error => console.log("could not fetch"))
-                    .finally(status => { 
-                        console.log("status", status)
-                        const feedid = newsfeed["feedid"]
-                        const feeditem = { itemnumber, feedid, title, description, linkurl, metadescr, imagesrc, pubdate }
-                        socket.emit('newsfeeditem', feeditem);
-        
-              })
+                    imagesrc = imagedata;
+                    let feedid = newsfeed["feedid"];
+                    let feeditem = { itemnumber, feedid, title, description, linkurl, metadescr, imagesrc, pubdate };
+                    socket.emit('newsfeeditem', feeditem);
+                })
+                .catch(error => console.log("could not fetch"));
     
         }
         
@@ -80,6 +77,8 @@ function collectNews(socket, newsfeed) {
       });
   
 }
+
+
 
 // Serve static files from the "public" directory
 app.use(express.static('public'));

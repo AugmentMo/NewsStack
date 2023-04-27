@@ -28450,6 +28450,15 @@ div.tagsinput span.tag a {
 .feeditem {
   width: 500px;
   white-space: pre-wrap;
+  color: black;
+  transition: all .1s ease-in-out; 
+}
+
+.feeditem:hover {
+  color: black;
+  text-decoration: underline;
+  text-decoration-color: darkgray;
+  transform: scale(1.005); 
 }
 
 @media (max-width: 991px) {
