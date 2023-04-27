@@ -1,22 +1,22 @@
 
 function isSessionDataAvailable() {
-    return sessionStorage.getItem('newsstacksession') != null;
+    return localStorage.getItem('newsstacksession') != null;
 }
 
 function saveSessionData() {
     const sessiondata = { 'newsfeeds': newsfeeds };
     const sessiondata_jsonstr = JSON.stringify(sessiondata)
-    sessionStorage.setItem('newsstacksession', sessiondata_jsonstr);
+    localStorage.setItem('newsstacksession', sessiondata_jsonstr);
 }
 
 function loadSessionData() {
-    const sessiondata_jsonstr = sessionStorage.getItem('newsstacksession');
+    const sessiondata_jsonstr = localStorage.getItem('newsstacksession');
     const sessiondata = JSON.parse(sessiondata_jsonstr);
     newsfeeds = sessiondata["newsfeeds"];
 }
 
 function clearSessionData() {
-    sessionStorage.removeItem('newsstacksession');
+    localStorage.removeItem('newsstacksession');
 }
 
 
