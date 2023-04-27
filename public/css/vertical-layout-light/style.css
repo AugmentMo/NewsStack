@@ -28445,6 +28445,7 @@ div.tagsinput span.tag a {
 .feedcolumn {
   width: auto;
   display: inline-block;
+  max-width: 535px;
 }
 
 .feeditem {
