@@ -12,7 +12,7 @@ RUN npm install
 # Copy the rest of the application code to the container
 COPY . .
 
-# Expose port 3000 for the server to listen on
+# Expose port 8080 for the server to listen on
 EXPOSE 8080
 
 # Start the application server
