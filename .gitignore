@@ -48,4 +48,8 @@ Thumbs.db
 *.mov
 *.wmv
 
+# Key files
+*.pem
+
+# Ignore virtual environment
 venv/
