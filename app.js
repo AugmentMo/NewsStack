@@ -2,7 +2,8 @@ const fetch = require('node-fetch');
 const { DOMParser } = require('xmldom');
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
-const { getMetaFeedData, fetchAndCropImage } = require('./fetchtest');
+const DOMPurify = require('isomorphic-dompurify');
+const { getMetaFeedData, fetchAndCropImage } = require('./fetchutil');
 
 const express = require('express');
 const app = express();
@@ -12,23 +13,48 @@ const { Server } = require("socket.io");
 const io = new Server(server);
 
 
+// Clean up string
+function cleanUpString(string) {
+    // remove anything but dom
+    const cleandom = DOMPurify.sanitize(string);
+    // remove dom
+    const cleanstring = cleandom.replace(/(<([^>]+)>)/ig, '');
+    // limit length
+    const limitedstring = cleanstring.substring(0, 50);
+
+    return limitedstring;    
+}
+
+function cleanUpNewsFeedReq(newsfeed) {
+    const clean_feedid = cleanUpString(newsfeed["feedid"])
+    const clean_feedkeywordstr = cleanUpString(newsfeed["feedkeywordstr"])
+
+    return {"feedid": clean_feedid ,"feedkeywordstr": clean_feedkeywordstr}
+}
+
 io.on("connection", (socket) => {
     console.log("socket connected")
     socket.on("getnews", (newsfeed) => {
         console.log("news request")
-        collectNews(socket, newsfeed)
+        const cleannewsfeed = cleanUpNewsFeedReq(newsfeed);
+        collectNews(socket, cleannewsfeed)
     });
 });
   
 
 function collectNews(socket, newsfeed) {
-    console.log(newsfeed)
     const url = 'https://news.google.com/rss/search?q='+newsfeed["feedkeywordstr"]+'&hl=en-NZ&gl=NZ&ceid=NZ:en';
     fetch(url)
       .then(response => response.text())
       .then(async data => {
-        const parser = new DOMParser();
-        const xml = parser.parseFromString(data, 'text/xml');
+          const parser = new DOMParser();
+          let relinkdata = data.replace(/<link>/g, "<relink>").replace(/<\/link>/g, "</relink>"); // this is ugly but dompurify sanitieser removes </link> as we are dealing with XML
+
+          const cleanData = DOMPurify.sanitize(relinkdata, {
+              ALLOWED_TAGS: ['item', 'title', 'description', 'relink']
+          });
+
+        const xml = parser.parseFromString(cleanData, 'text/xml');
         const items = xml.getElementsByTagName('item');
           const maxitem = 10; //items.length;
 
@@ -36,9 +62,8 @@ function collectNews(socket, newsfeed) {
             let itemnumber = i;
             let title = items[i].getElementsByTagName('title')[0].textContent;
             let description = items[i].getElementsByTagName('description')[0].textContent;
-            let linkurl = items[i].getElementsByTagName('link')[0].textContent;
+            let linkurl = items[i].getElementsByTagName('relink')[0].textContent;
                 
-    
             //////
             let imagesrc = "";
             let metadescr = "";

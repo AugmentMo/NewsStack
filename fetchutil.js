@@ -1,6 +1,7 @@
 const fetch = require('node-fetch');
 const { JSDOM } = require("jsdom");
 const sharp = require('sharp');
+const DOMPurify = require('isomorphic-dompurify');
 
 
 const url = 'https://news.google.com/rss/articles/CBMiKGh0dHBzOi8vc3BlY3RydW0uaWVlZS5vcmcvZmluZ2VyLWhhcHRpY3PSATdodHRwczovL3NwZWN0cnVtLmllZWUub3JnL2FtcC9maW5nZXItaGFwdGljcy0yNjU5ODg5Mjk5?oc=5';
@@ -44,7 +45,7 @@ function fetchRedirectLink(url) {
         const match = data.match(regex);
         if (match) {
             resurl = match[1];
-            console.log(resurl)
+            console.log("redirect url:", resurl)
         } else {
             console.log('No URL found in HTML');
         }
@@ -58,11 +59,20 @@ function fetchRedirectLink(url) {
 function fetchMetaData(url) {
     return fetch(url)
         .then(response => response.text())
-            .then(html => {
-            const dom = new JSDOM(html, { includeNodeLocations: true });
+        .then(html => {
+            const modhtml = html.replace(/(\s+property="[^"]*)\:([^"]*")/g, '$1-$2').replace(/(\s+name="[^"]*)\:([^"]*")/g, '$1-$2');; // replace : in properties with -
+
+            var cleanhtml = DOMPurify.sanitize(modhtml, {
+                ALLOWED_TAGS: ['meta'],
+                ALLOWED_ATTR: ["name", "property", "content"],
+                WHOLE_DOCUMENT: true
+            });
+            cleanhtml = cleanhtml.replace(/(\s+property="[^"]*)\-([^"]*")/g, '$1:$2').replace(/(\s+name="[^"]*)\-([^"]*")/g, '$1:$2'); // revert : in properties 
+
+            const dom = new JSDOM(cleanhtml, { includeNodeLocations: true });
             const doc = dom.window.document;
 
-            const twitterimg_meta_name_query_str = "twitter:image";
+            const twitterimg_meta_name_query_str = "twitter:image"; // twitter:image:src
             const tags_meta_name_query_str = "parsely-tags";
             const description_meta_name_query_str = "description";
             const keywords_meta_name_query_str = "keywords";
@@ -99,8 +109,8 @@ function fetchMetaData(url) {
                 "m_pubdate": m_pubdate,
                 "m_url": url
                 }
-                // console.log(metadata)
-                return metadata;
+            
+            return metadata;
         })
 }
 
@@ -141,9 +151,5 @@ async function getMetaFeedData(googlenewslink) {
             }    
         })
 }
-
-// getNewsFeedImage(url).then(metadat => {
-//     console.log(" I got ", metadat)
-// })
 
 module.exports = { getNewsFeedImage, getMetaFeedData, fetchAndCropImage };
