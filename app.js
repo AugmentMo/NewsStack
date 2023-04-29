@@ -98,7 +98,6 @@ function collectNews(socket, newsfeed) {
       })
       .catch(error => {
         console.log(error);
-        res.status(500).send('Error retrieving news feeds');
       });
   
 }
