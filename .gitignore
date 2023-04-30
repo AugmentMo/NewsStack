@@ -53,3 +53,4 @@ Thumbs.db
 
 # Ignore virtual environment
 venv/
+.env
