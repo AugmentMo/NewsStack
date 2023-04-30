@@ -30623,3 +30623,15 @@ div.tagsinput span.tag a {
 .btn-newscol:hover {
   opacity: 100%;
 }
+
+
+.userprofiledropdown {
+  display: inline-block;
+} 
+.userprofiledropdown img {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border-width: 4px;
+  border-color: var(--gray-light);
+}
