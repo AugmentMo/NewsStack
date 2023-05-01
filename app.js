@@ -11,6 +11,19 @@ const http = require('http');
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
+require('dotenv').config();
+
+// Auth0
+const { auth, requiresAuth } = require('express-openid-connect');
+const auth0_config = {
+    authRequired: false,
+    auth0Logout: true,
+    secret: process.env.AUTH0_CLIENT_SECRET,
+    baseURL: process.env.AUTH0_BASE_URL,
+    clientID: process.env.AUTH0_CLIENT_ID,
+    issuerBaseURL: process.env.AUTH0_DOMAIN
+  };
+app.use(auth(auth0_config));
 
 
 // Clean up string
@@ -109,9 +122,16 @@ app.use(express.static('public'));
 
 // Define a route for the home page
 app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/public/index.html');
+    res.sendFile(__dirname + '/public/index.html');
 });
 
+app.get('/loggedin', (req, res) => {
+    res.send(req.oidc.isAuthenticated() ? 'Logged in' : 'Logged out');
+});
+app.get('/profile', requiresAuth(), (req, res) => {
+    res.send(JSON.stringify(req.oidc.user.sub));
+  });
+  
 // Start the server
 server.listen(8080, () => {
     console.log('listening on *:8080');
