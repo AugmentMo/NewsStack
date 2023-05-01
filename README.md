@@ -16,9 +16,10 @@ Website: http://newsstack.info
 
 ## Next Up
 
-1. Auth0 implementation – user profile accessible via any device (in progress)
-2. More dynamic content loading – Speed up loading news
-3. Implement caching of news data – Speed up loading news 
-4. Add Search String Tipps – Show users how to use the search string effectively 
-5. Add onboarding feature – 3 steps user guide
-6. Add new news platforms
+1. Switch to HTTPS/SSL
+2. Auth0 implementation – user profile accessible via any device (in progress)
+3. More dynamic content loading – Speed up loading news
+4. Implement caching of news data – Speed up loading news 
+5. Add Search String Tipps – Show users how to use the search string effectively 
+6. Add onboarding feature – 3 steps user guide
+7. Add new news platforms
