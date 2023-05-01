@@ -21,3 +21,4 @@ Website: http://newsstack.info
 3. Implement caching of news data – Speed up loading news 
 4. Add Search String Tipps – Show users how to use the search string effectively 
 5. Add onboarding feature – 3 steps user guide
+6. Add new news platforms
