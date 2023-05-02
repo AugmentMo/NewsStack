@@ -3,6 +3,9 @@ FROM node:20-alpine
 # Set the working directory to /app
 WORKDIR /app
 
+# Create directory for ssl cert files
+RUN mkdir -p /app/sslcerts
+
 # Copy package.json and package-lock.json to the container
 COPY package*.json ./
 
