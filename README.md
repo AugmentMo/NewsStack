@@ -16,7 +16,7 @@ Website: http://newsstack.info
 
 ## Next Up
 
-1. Switch to HTTPS/SSL
+1. ~~Switch to HTTPS/SSL~~
 2. Auth0 implementation – user profile accessible via any device (in progress)
 3. More dynamic content loading – Speed up loading news
 4. Implement caching of news data – Speed up loading news 
