@@ -8,17 +8,17 @@ const { getMetaFeedData, fetchAndCropImage } = require('./fetchutil');
 const express = require('express');
 const app = express();
 const https = require('https');
+const http = require('https');
 const fs = require('fs');
 
 const httpsoptions = {
     key: fs.readFileSync('/app/sslcerts/privkey.pem'),
     cert: fs.readFileSync('/app/sslcerts/fullchain.pem')
-    };
+};
 
-const server = https.createServer(httpsoptions, app);
+const httpsServer = https.createServer(httpsoptions, app);
 const { Server } = require("socket.io");
-const io = new Server(server);
-
+const io = new Server(httpsServer);
 
 // Clean up string
 function cleanUpString(string) {
@@ -114,14 +114,22 @@ function collectNews(socket, newsfeed) {
 // Serve static files from the "public" directory
 app.use(express.static('public'));
 
+
 // Define a route for the home page
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/public/index.html');
 });
 
 // Start the server
-server.listen(443, () => {
-    console.log('listening on *:443');
+httpsServer.listen(443, () => {
+    console.log('HTTPS server started on port 443');
 });
   
-  
+// Redirect HTTP to HTTPS
+const httpServer = express();
+httpServer.get('*', (req, res) => {
+    res.redirect('https://' + req.headers.host + req.url);
+});
+httpServer.listen(80, () => {
+    console.log('HTTP server started on port 80');
+});
