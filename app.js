@@ -7,8 +7,15 @@ const { getMetaFeedData, fetchAndCropImage } = require('./fetchutil');
 
 const express = require('express');
 const app = express();
-const http = require('http');
-const server = http.createServer(app);
+const https = require('https');
+const fs = require('fs');
+
+const httpsoptions = {
+    key: fs.readFileSync('/app/sslcerts/privkey.pem'),
+    cert: fs.readFileSync('/app/sslcerts/fullchain.pem')
+    };
+
+const server = https.createServer(httpsoptions, app);
 const { Server } = require("socket.io");
 const io = new Server(server);
 
@@ -113,8 +120,8 @@ app.get('/', (req, res) => {
 });
 
 // Start the server
-server.listen(8080, () => {
-    console.log('listening on *:8080');
-  });
+server.listen(443, () => {
+    console.log('listening on *:443');
+});
   
   
