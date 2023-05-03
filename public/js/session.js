@@ -25,10 +25,10 @@ if (!isSessionDataAvailable()) {
     // Default example feeds
     console.log("Could not find session. Loading default example feeds..");
 
-    addNewFeed("Elon Musk", "elonmusk", "Elon+Musk", "googlenewsrss");
-    addNewFeed("Artificial Intelligence", "artificialintelligence", "Artificial+Intelligence", "googlenewsrss");
-    addNewFeed("Stock Market", "stockmarket", "Stock+Market", "googlenewsrss");
-    addNewFeed("World Politics", "worldpolitics", "World+Politics", "googlenewsrss");
+    addNewFeed("Mars Rovers", "marsrovers", "Mars Rovers", "googlenewsrss");
+    addNewFeed("Chuck Norris", "chucknorris", "Chuck Norris", "googlenewsrss");
+    addNewFeed("Competitive Eating", "competitiveeating", "Competitive Eating", "googlenewsrss");
+    addNewFeed("Artificial Intelligence", "artificialintelligence", "Artificial Intelligence", "googlenewsrss");
 
     requestNewsFeeds();
 }
