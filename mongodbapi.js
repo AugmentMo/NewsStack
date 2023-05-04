@@ -1,3 +1,5 @@
+const { MongoClient } = require('mongodb');
+
 function isUserExisting(sub) {
     
 }
