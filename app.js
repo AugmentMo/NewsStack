@@ -25,6 +25,7 @@ require('dotenv').config();
 
 // Auth0
 const { auth, requiresAuth } = require('express-openid-connect');
+const e = require('express');
 const auth0_config = {
     authRequired: false,
     auth0Logout: true,
@@ -53,6 +54,21 @@ function cleanUpNewsFeedReq(newsfeed) {
 
     return {"feedid": clean_feedid ,"feedkeywordstr": clean_feedkeywordstr}
 }
+
+const MAX_NSDATA_SIZE = 1024; // Maximum size in bytes
+function isNsDataValidated(ns_data) {
+    const ns_data_string = JSON.stringify(ns_data);
+    const ns_data_size = Buffer.byteLength(ns_data_string, 'utf8');
+    console.log("ns_data_size", ns_data_size)
+
+    if (ns_data_size > MAX_NSDATA_SIZE) {
+        return false;
+    }
+
+    return true;
+  }
+  
+  
 
 io.on("connection", (socket) => {
     console.log("socket connected")
@@ -98,8 +114,14 @@ io.on("connection", (socket) => {
         const sid = getUserSessionSID(socket.id);
         
         if (sid != null) {
-            const sub = getUserSubID(sid);
-            const ns_data = updateNewsStacks(sub, data);
+            if (isNsDataValidated(data)){
+                const sub = getUserSubID(sid);
+                const ns_data = updateNewsStacks(sub, data);
+            }
+            else {
+                console.log("Error: ns data invalid")
+                socket.emit("errormsg", "Error: invalid ns data");
+            }
         } else {
             console.log("Error: user session not found")
             socket.emit("errormsg", "Error: user session not found");
