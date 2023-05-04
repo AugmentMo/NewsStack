@@ -51,7 +51,16 @@ fetch('/usersession')
 
 // save ns data to user db
 function saveNSData() {
-  
+  // create a copy of newsfeed data
+  var savensdata = Object.assign({}, originalDict);
+
+  // clear all feed items
+  for (const feedid in newsfeeds) {
+    savensdata[feedid]["feeditems"] = [];
+  }
+
+  // send data to server
+  socket.emit("updatensdata", savensdata);
 }
 
 // load ns data from user db
