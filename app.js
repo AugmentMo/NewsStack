@@ -72,7 +72,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/loggedin', (req, res) => {
-    res.send(req.oidc.isAuthenticated() ? 'Logged in' : 'Logged out');
+    res.send(req.oidc.isAuthenticated() ? 'Logged in '+req.oidc.user.sid : 'Logged out '+req.oidc.user.sid);
 });
   
 // Start the server
