@@ -3,6 +3,9 @@ FROM node:20-alpine
 # Set the working directory to /app
 WORKDIR /app
 
+# Create directory for ssl cert files
+RUN mkdir -p /app/sslcerts
+
 # Copy package.json and package-lock.json to the container
 COPY package*.json ./
 
@@ -13,7 +16,8 @@ RUN npm install
 COPY . .
 
 # Expose port 8080 for the server to listen on
-EXPOSE 8080
+EXPOSE 80
+EXPOSE 443
 
 # Start the application server
 CMD [ "node", "app.js" ]
