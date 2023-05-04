@@ -1,7 +1,7 @@
 # [NewsStack.info](https://newsstack.info) – Your personalised stack of news.
 
 
-low the topics and headlines that really interest you and track them all in one view!
+Follow the topics and headlines that really interest you and track them all in one view!
 
 
 <img src="https://user-images.githubusercontent.com/62531877/236111068-8467a3be-a6f5-40cc-8644-e0e84f50798f.png" alt= “” width="800px">
