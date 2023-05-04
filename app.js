@@ -97,11 +97,6 @@ app.get('/logoutusersession', (req, res) => {
     res.redirect('/logout');
 });
 
-
-app.get('/loggedin', (req, res) => {
-    res.send(req.oidc.isAuthenticated() ? 'Logged in '+req.oidc.user.sid : 'Logged out '+req.oidc.user.sid);
-});
-
 app.get('/usersession', (req, res) => {
     if (req.oidc.isAuthenticated()) {
         const sid = req.oidc.user.sid;
