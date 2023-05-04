@@ -6,7 +6,10 @@ function updateUserSessionData(data) {
     if (isLoggedIn()) {
         // Logged in
         // hide login
+        $('#loginbtn').hide();
+
         // show profile dropdown + logout
+        $('#profiledropdown').show();
 
         // link socketid
         socket.emit("linksid", {sid: data.sid});
@@ -14,7 +17,10 @@ function updateUserSessionData(data) {
     else {
         // Logged out
         // hide profile dropdown + logout
+        $('#profiledropdown').hide();
+        
         // show login
+        $('#loginbtn').show();
     }
 }
 
