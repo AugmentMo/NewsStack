@@ -39,7 +39,7 @@ function closeMongoDBConnection() {
 }
 
 function isUserExisting(sub) {
-    
+    return userscollection.findOne({ sub: sub });
 }
 
 function getUserData(sub) {
