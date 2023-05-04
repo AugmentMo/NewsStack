@@ -42,14 +42,6 @@ function isUserExisting(sub) {
     return userscollection.findOne({ sub: sub });
 }
 
-function getUserData(sub) {
-    
-}
-
-function updateUserData(sub, usr_data) {
-    
-}
-
 function createUser(sub, usr_data) {
     try {
         // Insert a new document into the "users" collection
@@ -72,9 +64,8 @@ function getNewsStacks(sub) {
     if (user) {
         const ns_data = user['ns-data'];
         return ns_data;
-        console.log('ns-data field value for user with sub ' + sub + ': ' + ns_data);
     } else {
-     console.log('User with sub ' + sub + ' not found');
+        console.log('User with sub ' + sub + ' not found');
     }
 
     return null;
@@ -92,6 +83,22 @@ function updateNewsStacks(sub, ns_data) {
         console.log('Error: User with sub ' + sub + ' not found');
     }
 }
+
+
+function getUserData(sub) {
+    const filter = { sub: sub };
+    const user = userscollection.findOne(filter);
+
+    if (user) {
+        const user_data = user['user-data'];
+        return user_data;
+    } else {
+        console.log('User with sub ' + sub + ' not found');
+    }
+
+    return null;
+}
+
 
 function updateUserData(sub, user_data) {
     const filter = { sub: sub };
