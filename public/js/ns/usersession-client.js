@@ -37,9 +37,28 @@ fetch('/usersession')
     return response.json();
   })
   .then(usersessiondata => {
-      updateUserSessionData(usersessiondata)
+    updateUserSessionData(usersessiondata)
+    
+    // If logged in, once request newsstack data
+    if (isLoggedIn()) {
+      socket.emit("getnsdata")
+    }
   })
   .catch(error => {
     console.error('Error:', error);
   });
 
+
+// save ns data to user db
+function saveNSData() {
+  
+}
+
+// load ns data from user db
+socket.on('nsdata', (data) => {
+    // handle incoming newsstack data
+  newsfeeds = data;
+
+  // on receiving the ns data from server, request all feeds
+  requestNewsFeeds();
+});
