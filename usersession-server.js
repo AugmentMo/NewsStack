@@ -1,5 +1,5 @@
 // Users sessions, consisting of SID, SocketID pairs
-// Array of dicts: {sid: string, socketid: string}
+// Array of dicts: {sid: string, socketid: string, sub : string}
 var usersessions = []
 
 /**
@@ -23,10 +23,10 @@ function isUserSessionExisting(sid) {
  *
  * @param {*} sid SID of the user session
  */
-function createUserSession(sid) {
+function createUserSession(sid, sub) {
     if (!isUserSessionExisting(sid)) {
         // Creating new user session, with empty socketid
-        const newusersession = {sid: sid, socketid: null}
+        const newusersession = {sid: sid, sub: sub, socketid: null}
         usersessions.push(newusersession);
     }
 }
@@ -65,6 +65,22 @@ function getUserSessionSID(socketid) {
     for (const s of usersessions) {
         if (s.socketid == socketid) {
             return s.sid;
+        }
+    }
+
+    return null;
+}
+
+
+/**
+ * Returns the sub id for a given session id.
+ *
+ * @param {*} sid the sid of the user session
+ */
+function getUserSubID(sid) {
+    for (const s of usersessions) {
+        if (s.sid == sid) {
+            return s.sub;
         }
     }
 
