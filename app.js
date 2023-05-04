@@ -1,6 +1,6 @@
 const fetch = require('node-fetch');
 const { collectNews } = require('./fetchutil');
-
+const { createUserSession, updateUserSessionSocketID } = require('./usersession-server.js')
 const express = require('express');
 const app = express();
 const https = require('https');
@@ -55,10 +55,17 @@ function cleanUpNewsFeedReq(newsfeed) {
 
 io.on("connection", (socket) => {
     console.log("socket connected")
+
+    // News requests
     socket.on("getnews", (newsfeed) => {
         console.log("news request")
         const cleannewsfeed = cleanUpNewsFeedReq(newsfeed);
         collectNews(socket, cleannewsfeed)
+    });
+
+    // Link socketid with sid
+    socket.on("linksid", (data) => {
+        updateUserSessionSocketID(data.sid, socket.id);
     });
 });
 
@@ -74,9 +81,20 @@ app.get('/', (req, res) => {
 app.get('/loggedin', (req, res) => {
     res.send(req.oidc.isAuthenticated() ? 'Logged in '+req.oidc.user.sid : 'Logged out '+req.oidc.user.sid);
 });
-  
+
+app.get('/usersession', (req, res) => {
+    if (req.oidc.isAuthenticated()) {
+        const sid = req.oidc.user.sid;
+        createUserSession(sid);
+        res.send({loggedin: true, sid: sid});
+    }
+    else {
+        res.send({loggedin: false, sid: ""});
+    }
+});
+
 // Start the server
-httpsServer.listen(80, () => {
+httpsServer.listen(8080, () => {
     console.log('HTTPS server started on port 443');
 });
   
@@ -85,6 +103,6 @@ const httpServer = express();
 httpServer.get('*', (req, res) => {
     // res.redirect('https://' + req.headers.host + req.url);
 });
-httpServer.listen(8080, () => {
+httpServer.listen(9999, () => {
     console.log('HTTP server started on port 80');
 });
