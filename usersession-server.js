@@ -87,4 +87,4 @@ function getUserSubID(sid) {
     return null;
 }
 
-module.exports = { createUserSession, updateUserSessionSocketID, removeUserSession, getUserSessionSID };
+module.exports = { createUserSession, updateUserSessionSocketID, removeUserSession, getUserSessionSID, isUserSessionExisting, getUserSubID };

@@ -12,6 +12,8 @@ const mongodbClient = new MongoClient(mongodbUri);
 var mongodbconnected = false;
 var userscollection = null;
 
+connectMongoDB();
+
 function isMongoDBConnected() {
     return mongodbconnected;
 }
@@ -104,15 +106,20 @@ function getUserData(sub) {
 
 
 function updateUserData(sub, user_data) {
-    const filter = { sub: sub };
-    const update = { $set: { 'user-data': user_data } };
+    if (!isUserExisting(sub)) {
+        createUser(sub, usr_data);
+    }
+    else {
+        const filter = { sub: sub };
+        const update = { $set: { 'user-data': user_data } };
 
-    const result = userscollection.updateOne(filter, update);
+        const result = userscollection.updateOne(filter, update);
 
-    if (result.modifiedCount === 1) {
-        console.log('user-data field updated for user with sub ' + sub);
-    } else {
-        console.log('Error: User with sub ' + sub + ' not found');
+        if (result.modifiedCount === 1) {
+            console.log('user-data field updated for user with sub ' + sub);
+        } else {
+            console.log('Error: User with sub ' + sub + ' not found');
+        }
     }
 }
 
@@ -129,3 +136,6 @@ function updateLastLogin(sub) {
         console.log('Error: User with sub ' + sub + ' not found');
     }
 }
+
+
+module.exports = { updateUserData, updateNewsStacks, updateLastLogin, getNewsStacks };

@@ -1,6 +1,7 @@
 const fetch = require('node-fetch');
 const { collectNews } = require('./fetchutil');
-const { createUserSession, updateUserSessionSocketID, removeUserSession, getUserSessionSID } = require('./usersession-server.js')
+const { createUserSession, updateUserSessionSocketID, removeUserSession, getUserSessionSID, isUserSessionExisting, getUserSubID } = require('./usersession-server.js')
+const { updateUserData, updateNewsStacks, updateLastLogin, getNewsStacks} = require('./mongodbapi.js')
 const express = require('express');
 const app = express();
 const https = require('https');
@@ -76,7 +77,34 @@ io.on("connection", (socket) => {
         removeUserSession(sid);
 
         console.log("Removed usersession.");
-      });
+    });
+    
+    // Newsstacks data get request
+    socket.on("getnsdata", () => {
+        const sid = getUserSessionSID(socket.id);
+        
+        if (sid != null) {
+            const sub = getUserSubID(sid);
+            const ns_data = getNewsStacks(sub);
+            socket.emit("nsdata", ns_data);
+        } else {
+            console.log("Error: user session not found")
+            socket.emit("errormsg", "Error: user session not found");
+        }
+    });
+
+    // Newsstacks data update request
+    socket.on("updatensdata", (data) => {
+        const sid = getUserSessionSID(socket.id);
+        
+        if (sid != null) {
+            const sub = getUserSubID(sid);
+            const ns_data = updateNewsStacks(sub, data);
+        } else {
+            console.log("Error: user session not found")
+            socket.emit("errormsg", "Error: user session not found");
+        }
+    });
 });
 
 // Serve static files from the "public" directory
@@ -100,7 +128,12 @@ app.get('/logoutusersession', (req, res) => {
 app.get('/usersession', (req, res) => {
     if (req.oidc.isAuthenticated()) {
         const sid = req.oidc.user.sid;
-        createUserSession(sid);
+        const sub = req.oidc.user.sub;
+
+        createUserSession(sid, sub);
+        updateUserData(sub, req.oidc.user);
+        updateLastLogin(sub);
+
         res.send({loggedin: true, sid: sid});
     }
     else {
