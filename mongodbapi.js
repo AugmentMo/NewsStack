@@ -70,5 +70,14 @@ function getNewsStacks(sub) {
 }
 
 function updateNewsStacks(sub, ns_data) {
-    
+    const filter = { sub: sub };
+    const update = { $set: { 'ns-data': ns_data } };
+
+    const result = userscollection.updateOne(filter, update);
+
+    if (result.modifiedCount === 1) {
+        console.log('ns-data field updated for user with sub ' + sub);
+    } else {
+        console.log('Error: User with sub ' + sub + ' not found');
+    }
 }
