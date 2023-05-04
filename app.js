@@ -1,6 +1,6 @@
 const fetch = require('node-fetch');
 const { collectNews } = require('./fetchutil');
-const { createUserSession, updateUserSessionSocketID } = require('./usersession-server.js')
+const { createUserSession, updateUserSessionSocketID, removeUserSession, getUserSessionSID } = require('./usersession-server.js')
 const express = require('express');
 const app = express();
 const https = require('https');
@@ -67,16 +67,36 @@ io.on("connection", (socket) => {
     socket.on("linksid", (data) => {
         updateUserSessionSocketID(data.sid, socket.id);
     });
+
+    // Remove usersession on disconnect
+    socket.on("disconnect", () => {
+        console.log("Socket disconnected.");
+
+        const sid = getUserSessionSID(socket.id)
+        removeUserSession(sid);
+
+        console.log("Removed usersession.");
+      });
 });
 
 // Serve static files from the "public" directory
 app.use(express.static('public'));
 
-
 // Define a route for the home page
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/public/index.html');
 });
+
+app.get('/logoutusersession', (req, res) => {
+    console.log("Logging out.");
+
+    console.log(req.oidc.user.sid, " says good bye")
+    removeUserSession(req.oidc.user.sid);
+    
+    console.log("Removed usersession.");
+    res.redirect('/logout');
+});
+
 
 app.get('/loggedin', (req, res) => {
     res.send(req.oidc.isAuthenticated() ? 'Logged in '+req.oidc.user.sid : 'Logged out '+req.oidc.user.sid);

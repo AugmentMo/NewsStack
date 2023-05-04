@@ -71,4 +71,4 @@ function getUserSessionSID(socketid) {
     return null;
 }
 
-module.exports = { createUserSession, updateUserSessionSocketID };
+module.exports = { createUserSession, updateUserSessionSocketID, removeUserSession, getUserSessionSID };
