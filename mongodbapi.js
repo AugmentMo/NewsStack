@@ -66,7 +66,18 @@ function createUser(sub, usr_data) {
 }
 
 function getNewsStacks(sub) {
-    
+    const filter = { sub: sub };
+    const user = userscollection.findOne(filter);
+
+    if (user) {
+        const ns_data = user['ns-data'];
+        return ns_data;
+        console.log('ns-data field value for user with sub ' + sub + ': ' + ns_data);
+    } else {
+     console.log('User with sub ' + sub + ' not found');
+    }
+
+    return null;
 }
 
 function updateNewsStacks(sub, ns_data) {
@@ -77,6 +88,19 @@ function updateNewsStacks(sub, ns_data) {
 
     if (result.modifiedCount === 1) {
         console.log('ns-data field updated for user with sub ' + sub);
+    } else {
+        console.log('Error: User with sub ' + sub + ' not found');
+    }
+}
+
+function updateUserData(sub, user_data) {
+    const filter = { sub: sub };
+    const update = { $set: { 'user-data': user_data } };
+
+    const result = userscollection.updateOne(filter, update);
+
+    if (result.modifiedCount === 1) {
+        console.log('user-data field updated for user with sub ' + sub);
     } else {
         console.log('Error: User with sub ' + sub + ' not found');
     }
