@@ -43,12 +43,15 @@ function isUserExisting(sub) {
 }
 
 function createUser(sub, usr_data) {
+    const currentDate = new Date();
+
     try {
         // Insert a new document into the "users" collection
         const result =  userscollection.insertOne({
-          sub: sub,
-          'user-data': usr_data,
-          'ns-data': null,
+            sub: sub,
+            lastLogin: currentDate.toString(),
+            'user-data': usr_data,
+            'ns-data': null,
         });
     
         console.log(`Document created with ID ${result.insertedId}`);
@@ -108,6 +111,20 @@ function updateUserData(sub, user_data) {
 
     if (result.modifiedCount === 1) {
         console.log('user-data field updated for user with sub ' + sub);
+    } else {
+        console.log('Error: User with sub ' + sub + ' not found');
+    }
+}
+
+function updateLastLogin(sub) {
+    const currentDate = new Date();
+    const filter = { sub: sub };
+    const update = { $set: { lastLogin: currentDate.toString() } };
+
+    const result = userscollection.updateOne(filter, update);
+
+    if (result.modifiedCount === 1) {
+        console.log('lastLogin field updated for user with sub ' + sub);
     } else {
         console.log('Error: User with sub ' + sub + ' not found');
     }
