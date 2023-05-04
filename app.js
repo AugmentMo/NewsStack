@@ -128,9 +128,6 @@ app.get('/', (req, res) => {
 app.get('/loggedin', (req, res) => {
     res.send(req.oidc.isAuthenticated() ? 'Logged in' : 'Logged out');
 });
-app.get('/profile', requiresAuth(), (req, res) => {
-    res.send(JSON.stringify(req.oidc.user.sub));
-  });
   
 // Start the server
 server.listen(8080, () => {
