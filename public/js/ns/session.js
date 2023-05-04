@@ -19,21 +19,23 @@ function clearSessionData() {
     localStorage.removeItem('newsstacksession');
 }
 
+// If not logged in try using local storage data
+if (!isLoggedIn()) {
+    // Check if session data is available, otherwise load default feeds
+    if (!isSessionDataAvailable()) {
+        // Default example feeds
+        console.log("Could not find session. Loading default example feeds..");
 
-// Check if session data is available, otherwise load default feeds
-if (!isSessionDataAvailable()) {
-    // Default example feeds
-    console.log("Could not find session. Loading default example feeds..");
+        addNewFeed("Mars Rovers", "marsrovers", "Mars Rovers", "googlenewsrss");
+        addNewFeed("Chuck Norris", "chucknorris", "Chuck Norris", "googlenewsrss");
+        addNewFeed("Competitive Eating", "competitiveeating", "Competitive Eating", "googlenewsrss");
+        addNewFeed("Artificial Intelligence", "artificialintelligence", "Artificial Intelligence", "googlenewsrss");
 
-    addNewFeed("Mars Rovers", "marsrovers", "Mars Rovers", "googlenewsrss");
-    addNewFeed("Chuck Norris", "chucknorris", "Chuck Norris", "googlenewsrss");
-    addNewFeed("Competitive Eating", "competitiveeating", "Competitive Eating", "googlenewsrss");
-    addNewFeed("Artificial Intelligence", "artificialintelligence", "Artificial Intelligence", "googlenewsrss");
-
-    requestNewsFeeds();
-}
-else {
-    console.log("Found prior session. Loading prior session feeds..");
-    loadSessionData();
-    requestNewsFeeds();
+        requestNewsFeeds();
+    }
+    else {
+        console.log("Found prior session. Loading prior session feeds..");
+        loadSessionData();
+        requestNewsFeeds();
+    }
 }
