@@ -8,15 +8,20 @@ const { getMetaFeedData, fetchAndCropImage } = require('./fetchutil');
 const express = require('express');
 const app = express();
 const https = require('https');
-const http = require('https');
+const http = require('http');
 const fs = require('fs');
 
 const httpsoptions = {
+    /* DEV
     key: fs.readFileSync('/app/sslcerts/privkey.pem'),
     cert: fs.readFileSync('/app/sslcerts/fullchain.pem')
+    */
 };
 
+/* DEV
 const httpsServer = https.createServer(httpsoptions, app);
+*/
+const httpsServer = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(httpsServer);
 require('dotenv').config();
@@ -138,15 +143,15 @@ app.get('/loggedin', (req, res) => {
 });
   
 // Start the server
-httpsServer.listen(443, () => {
+httpsServer.listen(80, () => {
     console.log('HTTPS server started on port 443');
 });
   
 // Redirect HTTP to HTTPS
 const httpServer = express();
 httpServer.get('*', (req, res) => {
-    res.redirect('https://' + req.headers.host + req.url);
+    // res.redirect('https://' + req.headers.host + req.url);
 });
-httpServer.listen(80, () => {
+httpServer.listen(8080, () => {
     console.log('HTTP server started on port 80');
 });
