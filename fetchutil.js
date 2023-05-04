@@ -2,6 +2,7 @@ const fetch = require('node-fetch');
 const { JSDOM } = require("jsdom");
 const sharp = require('sharp');
 const DOMPurify = require('isomorphic-dompurify');
+const { DOMParser } = require('xmldom');
 
 
 const url = 'https://news.google.com/rss/articles/CBMiKGh0dHBzOi8vc3BlY3RydW0uaWVlZS5vcmcvZmluZ2VyLWhhcHRpY3PSATdodHRwczovL3NwZWN0cnVtLmllZWUub3JnL2FtcC9maW5nZXItaGFwdGljcy0yNjU5ODg5Mjk5?oc=5';
@@ -152,4 +153,65 @@ async function getMetaFeedData(googlenewslink) {
         })
 }
 
-module.exports = { getNewsFeedImage, getMetaFeedData, fetchAndCropImage };
+
+function collectNews(socket, newsfeed) {
+    const url = 'https://news.google.com/rss/search?q='+newsfeed["feedkeywordstr"]+'&hl=en-NZ&gl=NZ&ceid=NZ:en';
+    fetch(url)
+      .then(response => response.text())
+      .then(async data => {
+          const parser = new DOMParser();
+          let relinkdata = data.replace(/<link>/g, "<relink>").replace(/<\/link>/g, "</relink>"); // this is ugly but dompurify sanitieser removes </link> as we are dealing with XML
+
+          const cleanData = DOMPurify.sanitize(relinkdata, {
+              ALLOWED_TAGS: ['item', 'title', 'description', 'relink']
+          });
+
+        const xml = parser.parseFromString(cleanData, 'text/xml');
+        const items = xml.getElementsByTagName('item');
+          const maxitem = 10; //items.length;
+
+          for (let i = 0; i < maxitem; i++) {
+            let itemnumber = i;
+            let title = items[i].getElementsByTagName('title')[0].textContent;
+            let description = items[i].getElementsByTagName('description')[0].textContent;
+            let linkurl = items[i].getElementsByTagName('relink')[0].textContent;
+                
+            //////
+            let imagesrc = "";
+            let metadescr = "";
+            let pubdate = "";
+                getMetaFeedData(linkurl)
+                .then(metadata => {
+                    if (metadata != undefined) {
+                        if (metadata["m_description"]) {
+                            metadescr = metadata["m_description"]
+                        }
+                        if (metadata["m_url"]) {
+                            linkurl = metadata["m_url"]
+                        }
+                        if (metadata["m_pubdate"]) {
+                            pubdate = metadata["m_pubdate"]
+                        }
+                        if (metadata["m_img"]) {
+                            return fetchAndCropImage(metadata["m_img"]);
+                        }
+                    }
+                })
+                .then(imagedata => {
+                    imagesrc = imagedata;
+                    let feedid = newsfeed["feedid"];
+                    let feeditem = { itemnumber, feedid, title, description, linkurl, metadescr, imagesrc, pubdate };
+                    socket.emit('newsfeeditem', feeditem);
+                })
+                .catch(error => console.log("could not fetch"));
+    
+        }
+        
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  
+}
+
+module.exports = { collectNews};
