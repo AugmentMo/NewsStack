@@ -2,10 +2,10 @@
 
 
 
-Choose your favorite topics and headlines, and track them all in one view!
+Follow the topics and headlines you are actually interested in, and track them all in one view!
 
 
-<img src="https://user-images.githubusercontent.com/62531877/235277479-5f252622-a77c-40f6-9f64-7a0e138dd3bb.png" alt= “” width="800px">
+<img src="https://user-images.githubusercontent.com/62531877/236111068-8467a3be-a6f5-40cc-8644-e0e84f50798f.png" alt= “” width="800px">
 Website: http://newsstack.info
 
 ## Supported News Platforms
