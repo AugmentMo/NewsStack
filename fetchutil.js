@@ -23,7 +23,7 @@ function fetchAndCropImage(url) {
           });
       })
       .catch(error => {
-        console.log(error);
+        console.error("error: failed fetchAndCropImage");
       });
   }
   
@@ -53,7 +53,7 @@ function fetchRedirectLink(url) {
 
         return resurl
     })
-    .catch(error => console.error(error));
+    .catch(error => console.error("error: failed fetchRedirectLink"));
 
 }
 
@@ -203,13 +203,13 @@ function collectNews(socket, newsfeed) {
                     let feeditem = { itemnumber, feedid, title, description, linkurl, metadescr, imagesrc, pubdate };
                     socket.emit('newsfeeditem', feeditem);
                 })
-                .catch(error => console.log("could not fetch"));
+                .catch(error => console.error("could not fetch"));
     
         }
         
       })
       .catch(error => {
-        console.log(error);
+        console.error("error: failed fetching newsfeed"+newsfeed);
       });
   
 }

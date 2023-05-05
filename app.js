@@ -152,8 +152,11 @@ app.get('/usersession', (req, res) => {
         const sid = req.oidc.user.sid;
         const sub = req.oidc.user.sub;
 
+        console.log("creating new usersession");
         createUserSession(sid, sub);
+        console.log("updateuserdata");
         updateUserData(sub, req.oidc.user);
+        console.log("updateuserlogin");
         updateLastLogin(sub);
 
         res.send({loggedin: true, sid: sid});

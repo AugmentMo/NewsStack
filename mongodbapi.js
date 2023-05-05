@@ -30,6 +30,7 @@ function connectMongoDB() {
         userscollection = db.collection('users');
         mongodbconnected = true;
     } catch (error) {
+        console.error("ERROR: Could not connect to MongoDB", mongodbUri, dbName, error)
         mongodbconnected = false;
     }
 }
@@ -107,7 +108,7 @@ function getUserData(sub) {
 
 function updateUserData(sub, user_data) {
     if (!isUserExisting(sub)) {
-        createUser(sub, usr_data);
+        createUser(sub, user_data);
     }
     else {
         const filter = { sub: sub };
