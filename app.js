@@ -55,7 +55,7 @@ function cleanUpNewsFeedReq(newsfeed) {
     return {"feedid": clean_feedid ,"feedkeywordstr": clean_feedkeywordstr}
 }
 
-const MAX_NSDATA_SIZE = 1024; // Maximum size in bytes
+const MAX_NSDATA_SIZE = 10240; // Maximum storage data
 function isNsDataValidated(ns_data) {
     const ns_data_string = JSON.stringify(ns_data);
     const ns_data_size = Buffer.byteLength(ns_data_string, 'utf8');
