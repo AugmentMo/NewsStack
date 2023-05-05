@@ -37,12 +37,19 @@ fetch('/usersession')
     return response.json();
   })
   .then(usersessiondata => {
-    updateUserSessionData(usersessiondata)
-    
-    // If logged in, once request newsstack data
-    if (isLoggedIn()) {
-      socket.emit("getnsdata")
+    updateUserSessionData(usersessiondata);
+
+    // If server requests, send ns data, usually on user creation
+    if (usersessiondata.req_ns_data) {
+      saveNSData();
     }
+    else {
+      // If logged in, once request newsstack data
+      if (isLoggedIn()) {
+        socket.emit("getnsdata")
+      }
+    }
+
   })
   .catch(error => {
     console.error('Error:', error);
@@ -52,10 +59,10 @@ fetch('/usersession')
 // save ns data to user db
 function saveNSData() {
   // create a copy of newsfeed data
-  var savensdata = Object.assign({}, originalDict);
+  var savensdata = Object.assign({}, newsfeeds);
 
   // clear all feed items
-  for (const feedid in newsfeeds) {
+  for (const feedid in savensdata) {
     savensdata[feedid]["feeditems"] = [];
   }
 

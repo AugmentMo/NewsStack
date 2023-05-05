@@ -134,6 +134,7 @@ function updateNewsFeedsDisplay() {
 function addNewFeed(feedtitle, feedid, feedkeywordstr, newssource) {
     newsfeeds[feedid] = { "feedtitle": feedtitle, "feedkeywordstr": feedkeywordstr, "newssource": newssource, "feeditems": [] }
     saveSessionData();
+    saveNSData();
 }
 
 function updateFeed(feedid, feedtitle, feedkeywordstr, newssource, feeditems = null) {
@@ -143,6 +144,7 @@ function updateFeed(feedid, feedtitle, feedkeywordstr, newssource, feeditems = n
     }
     newsfeeds[feedid] = { "feedtitle": feedtitle, "feedkeywordstr": feedkeywordstr, "newssource": newssource, "feeditems": newfeeditems }
     saveSessionData();
+    saveNSData();
 }
 
 function htmlAddFeed(feedid) {
@@ -171,6 +173,7 @@ function htmlAddFeed(feedid) {
 function deleteFeed(feedid) {
     delete newsfeeds[feedid];
     saveSessionData();
+    saveNSData();
 }
 
 function addNewFeedItem(item) {

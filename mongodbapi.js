@@ -29,6 +29,8 @@ function connectMongoDB() {
         // Create a new "users" collection
         userscollection = db.collection('users');
         mongodbconnected = true;
+
+        console.log("Connected to MongoDB", mongodbUri)
     } catch (error) {
         console.error("ERROR: Could not connect to MongoDB", mongodbUri, dbName, error)
         mongodbconnected = false;
@@ -41,17 +43,25 @@ function closeMongoDBConnection() {
     mongodbconnected = false;
 }
 
-function isUserExisting(sub) {
-    return userscollection.findOne({ sub: sub });
+async function isUserExisting(sub) {
+    const result = await userscollection.findOne({ _id: sub })
+
+    if (result) {
+        console.log("isUserExisting: found user")
+        return true;
+    } else {
+        console.log("isUserExisting: did not find user")
+        return false;
+    }
 }
 
-function createUser(sub, usr_data) {
+async function createUser(sub, usr_data) {
     const currentDate = new Date();
-
+    console.log("creating new user")
     try {
         // Insert a new document into the "users" collection
-        const result =  userscollection.insertOne({
-            sub: sub,
+        const result = await userscollection.insertOne({
+            _id: sub,
             lastLogin: currentDate.toString(),
             'user-data': usr_data,
             'ns-data': null,
@@ -63,10 +73,10 @@ function createUser(sub, usr_data) {
       } 
 }
 
-function getNewsStacks(sub) {
-    const filter = { sub: sub };
-    const user = userscollection.findOne(filter);
-
+async function getNewsStacks(sub) {
+    const filter = { _id: sub };
+    const user = await userscollection.findOne(filter);
+    
     if (user) {
         const ns_data = user['ns-data'];
         return ns_data;
@@ -77,11 +87,11 @@ function getNewsStacks(sub) {
     return null;
 }
 
-function updateNewsStacks(sub, ns_data) {
-    const filter = { sub: sub };
+async function updateNewsStacks(sub, ns_data) {
+    const filter = { _id: sub };
     const update = { $set: { 'ns-data': ns_data } };
 
-    const result = userscollection.updateOne(filter, update);
+    const result = await userscollection.updateOne(filter, update);
 
     if (result.modifiedCount === 1) {
         console.log('ns-data field updated for user with sub ' + sub);
@@ -91,9 +101,9 @@ function updateNewsStacks(sub, ns_data) {
 }
 
 
-function getUserData(sub) {
-    const filter = { sub: sub };
-    const user = userscollection.findOne(filter);
+async function getUserData(sub) {
+    const filter = { _id: sub };
+    const user = await userscollection.findOne(filter);
 
     if (user) {
         const user_data = user['user-data'];
@@ -106,15 +116,15 @@ function getUserData(sub) {
 }
 
 
-function updateUserData(sub, user_data) {
-    if (!isUserExisting(sub)) {
-        createUser(sub, user_data);
+async function updateUserData(sub, user_data) {
+    if (await isUserExisting(sub)) {
+        await createUser(sub, user_data);
     }
     else {
-        const filter = { sub: sub };
+        const filter = { _id: sub };
         const update = { $set: { 'user-data': user_data } };
 
-        const result = userscollection.updateOne(filter, update);
+        const result = await userscollection.updateOne(filter, update);
 
         if (result.modifiedCount === 1) {
             console.log('user-data field updated for user with sub ' + sub);
@@ -124,12 +134,12 @@ function updateUserData(sub, user_data) {
     }
 }
 
-function updateLastLogin(sub) {
+async function updateLastLogin(sub) {
     const currentDate = new Date();
-    const filter = { sub: sub };
+    const filter = { _id: sub };
     const update = { $set: { lastLogin: currentDate.toString() } };
 
-    const result = userscollection.updateOne(filter, update);
+    const result = await userscollection.updateOne(filter, update);
 
     if (result.modifiedCount === 1) {
         console.log('lastLogin field updated for user with sub ' + sub);
@@ -139,4 +149,4 @@ function updateLastLogin(sub) {
 }
 
 
-module.exports = { updateUserData, updateNewsStacks, updateLastLogin, getNewsStacks };
+module.exports = { updateUserData, updateNewsStacks, updateLastLogin, getNewsStacks, isUserExisting, createUser };

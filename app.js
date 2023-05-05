@@ -1,7 +1,7 @@
 const fetch = require('node-fetch');
 const { collectNews } = require('./fetchutil');
 const { createUserSession, updateUserSessionSocketID, removeUserSession, getUserSessionSID, isUserSessionExisting, getUserSubID } = require('./usersession-server.js')
-const { updateUserData, updateNewsStacks, updateLastLogin, getNewsStacks} = require('./mongodbapi.js')
+const { updateUserData, updateNewsStacks, updateLastLogin, getNewsStacks, isUserExisting, createUser} = require('./mongodbapi.js')
 const express = require('express');
 const app = express();
 const https = require('https');
@@ -59,7 +59,6 @@ const MAX_NSDATA_SIZE = 1024; // Maximum size in bytes
 function isNsDataValidated(ns_data) {
     const ns_data_string = JSON.stringify(ns_data);
     const ns_data_size = Buffer.byteLength(ns_data_string, 'utf8');
-    console.log("ns_data_size", ns_data_size)
 
     if (ns_data_size > MAX_NSDATA_SIZE) {
         return false;
@@ -92,16 +91,15 @@ io.on("connection", (socket) => {
         const sid = getUserSessionSID(socket.id)
         removeUserSession(sid);
 
-        console.log("Removed usersession.");
     });
     
     // Newsstacks data get request
-    socket.on("getnsdata", () => {
+    socket.on("getnsdata", async () => {
         const sid = getUserSessionSID(socket.id);
         
         if (sid != null) {
             const sub = getUserSubID(sid);
-            const ns_data = getNewsStacks(sub);
+            const ns_data = await getNewsStacks(sub);
             socket.emit("nsdata", ns_data);
         } else {
             console.log("Error: user session not found")
@@ -110,13 +108,13 @@ io.on("connection", (socket) => {
     });
 
     // Newsstacks data update request
-    socket.on("updatensdata", (data) => {
+    socket.on("updatensdata", async (data) => {
         const sid = getUserSessionSID(socket.id);
-        
+
         if (sid != null) {
             if (isNsDataValidated(data)){
                 const sub = getUserSubID(sid);
-                const ns_data = updateNewsStacks(sub, data);
+                await updateNewsStacks(sub, data);
             }
             else {
                 console.log("Error: ns data invalid")
@@ -138,31 +136,39 @@ app.get('/', (req, res) => {
 });
 
 app.get('/logoutusersession', (req, res) => {
-    console.log("Logging out.");
+    console.log("User logging out.");
 
-    console.log(req.oidc.user.sid, " says good bye")
     removeUserSession(req.oidc.user.sid);
     
-    console.log("Removed usersession.");
     res.redirect('/logout');
 });
 
-app.get('/usersession', (req, res) => {
+app.get('/usersession', async (req, res) => {
     if (req.oidc.isAuthenticated()) {
         const sid = req.oidc.user.sid;
         const sub = req.oidc.user.sub;
 
-        console.log("creating new usersession");
         createUserSession(sid, sub);
-        console.log("updateuserdata");
-        updateUserData(sub, req.oidc.user);
-        console.log("updateuserlogin");
-        updateLastLogin(sub);
 
-        res.send({loggedin: true, sid: sid});
+        // if first time logging in, request ns data
+        const userexists = await isUserExisting(sub);
+        if (!userexists) {
+            // Create new user and ask client for ns data
+            createUser(sub, req.oidc.user).then(() => {
+                res.send({ loggedin: true, sid: sid, req_ns_data : true });
+            });
+        }
+        else {
+            updateUserData(sub, req.oidc.user).then(() => {
+                updateLastLogin(sub);
+            }).finally(() => {
+                res.send({ loggedin: true, sid: sid, req_ns_data : false });
+            })
+        }
+    
     }
     else {
-        res.send({loggedin: false, sid: ""});
+        res.send({loggedin: false, sid: "" , req_ns_data : false});
     }
 });
 
