@@ -35,50 +35,60 @@
       <!-- partial -->
       <div class="main-panel">
         <div class="content-wrapper">
-          <div class="row">
-            <div class="col-md-12 grid-margin">
-              <div class="row">
-                <div class="col mb-4 mb-xl-0"
-                  style="display: flex; justify-content: space-between; align-items: center;">
-                  <a href="">
-                    <h3 class="font-weight-bold"
-                      style="display:inline-block; background: black; color: white;padding: 10px; border-radius: 10px; margin: 0;">
-                      <img src="images/newsstack-icon-white.png"
-                        style="width: 20px; height: 22px; vertical-align: top;">
-                      NewsStack
-                    </h3>
-                  </a>
-                  <div>
-                    <button id="addnewsstackbtn" type="button" class="btn btn-outline-dark btn-fw"
-                      style="border-radius: 10px;">Add Stack</button>
-                    <button id="loginbtn" type="button" class="btn btn-outline-dark btn-fw" style="border-radius: 10px;"
-                      onclick="location.href='/login';">Login</button>
-                    <div id="profiledropdown" class="userprofiledropdown dropdown" style="display: none;">
-                      <a href="#" class="dropdown-toggle" id="userDropdown" data-toggle="dropdown" aria-haspopup="true"
-                        aria-expanded="false">
-                        <img src="images/userprofileimg.png" alt="User Profile Image">
-                      </a>
-                      <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-                        <span class="d-none d-md-inline-block ml-4 mr-4 mt-2 mb-3">
-                          <strong id="userprofilename"></strong><br>
-                          <div id="userprofileemail"></div>
-                        </span>
-
-                        <div class="text-center">
-                          <button class="btn btn-dark btn-logout"
-                            onclick="location.href='/logoutusersession';">Logout</button>
-                        </div>
+          <!-- NAVBAR START -->
+          <nav class="navbar navbar-expand-md navbar-light" style="box-shadow: none;">
+            <!-- LOGO -->
+            <a class="navbar-brand" href="">
+              <h3 class="font-weight-bold"
+                style="display:inline-block; background: black; color: white;padding: 10px; border-radius: 10px; margin: 0;">
+                <img src="images/newsstack-icon-white.png" style="width: 20px; height: 22px; vertical-align: top;">
+                NewsStack
+              </h3>
+            </a>
+            <!-- TOGGLER -->
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarMenu"
+              aria-controls="navbarMenu" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <!-- COLLAPSABLE -->
+            <div class="collapse navbar-collapse justify-content-end" id="navbarMenu">
+              <ul class="navbar-nav ml-0">
+                <!-- items floating at the right -->
+                <!-- Add Stack Button -->
+                <li class="nav-item">
+                  <button id="addnewsstackbtn" type="button" class="btn btn-outline-dark btn-fw mr-3"
+                    style="border-radius: 10px;">Add Stack</button>
+                </li>
+                <!-- Login -->
+                <li class="nav-item">
+                  <a id="loginbtn" class="nav-link" href="/login" onclick="location.href='/login';">Login</a>
+                </li>
+                <!-- Profile Drop Down -->
+                <li class="nav-item">
+                  <div id="profiledropdown" class="userprofiledropdown dropdown" style="display: none;">
+                    <a href="#" class="dropdown-toggle" id="userDropdown" data-toggle="dropdown" aria-haspopup="true"
+                      aria-expanded="false">
+                      <img src="images/userprofileimg.png" alt="User Profile Image">
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+                      <span class="d-none d-md-inline-block ml-4 mr-4 mt-2 mb-3">
+                        <strong id="userprofilename"></strong><br>
+                        <div id="userprofileemail"></div>
+                      </span>
+                      <div class="text-center">
+                        <button class="btn btn-dark btn-logout"
+                          onclick="location.href='/logoutusersession';">Logout</button>
                       </div>
                     </div>
                   </div>
-                </div>
-              </div>
+                </li>
+              </ul>
             </div>
-          </div>
+          </nav>
+          <!-- NAVBAR END -->
           <div id="news-container" class="row" style="flex-wrap: nowrap; overflow: auto; white-space: nowrap;">
 
           </div>
-
         </div>
         <!-- content-wrapper ends -->
         <!-- partial:partials/_footer.html -->
