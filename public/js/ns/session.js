@@ -19,8 +19,8 @@ function clearSessionData() {
     localStorage.removeItem('newsstacksession');
 }
 
-// If not logged in try using local storage data
-if (!isLoggedIn()) {
+// Try using exsiting local storage data
+function useLocalStorageSession() {
     // Check if session data is available, otherwise load default feeds
     if (!isSessionDataAvailable()) {
         // Default example feeds

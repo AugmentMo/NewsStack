@@ -54,6 +54,10 @@ fetch('/usersession')
       }
     }
 
+    if (!isLoggedIn()) { // The user is not logged in
+      useLocalStorageSession();
+    }
+
   })
   .catch(error => {
     console.error('Error:', error);
