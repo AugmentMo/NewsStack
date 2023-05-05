@@ -4,7 +4,7 @@
 Follow the topics and headlines that really interest you and track them all in one view!
 
 
-<img src="https://user-images.githubusercontent.com/62531877/236419360-a1d37ff7-f66a-45a1-8389-94c52e2702bc.png" alt= “” width="800px">
+<img src="https://user-images.githubusercontent.com/62531877/236419810-759bcbeb-db18-4507-bbf5-f1be7f1e5514.png" alt= “” width="800px" href="https://newsstack.info">
 Website: https://newsstack.info
 
 ## Supported News Platforms
