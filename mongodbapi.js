@@ -149,4 +149,4 @@ async function updateLastLogin(sub) {
 }
 
 
-module.exports = { updateUserData, updateNewsStacks, updateLastLogin, getNewsStacks, isUserExisting, createUser };
+module.exports = { updateUserData, updateNewsStacks, updateLastLogin, getNewsStacks, isUserExisting, createUser, getUserData };

@@ -1,7 +1,7 @@
 const fetch = require('node-fetch');
 const { collectNews } = require('./fetchutil');
 const { createUserSession, updateUserSessionSocketID, removeUserSession, getUserSessionSID, isUserSessionExisting, getUserSubID } = require('./usersession-server.js')
-const { updateUserData, updateNewsStacks, updateLastLogin, getNewsStacks, isUserExisting, createUser} = require('./mongodbapi.js')
+const { updateUserData, updateNewsStacks, updateLastLogin, getNewsStacks, isUserExisting, createUser, getUserData } = require('./mongodbapi.js')
 const express = require('express');
 const app = express();
 const https = require('https');
@@ -125,6 +125,20 @@ io.on("connection", (socket) => {
             socket.emit("errormsg", "Error: user session not found");
         }
     });
+
+    // Userdata request
+    socket.on("getuserdata", async (data) => {
+        const sid = getUserSessionSID(socket.id);
+
+        if (sid != null) {
+            const sub = getUserSubID(sid);
+            const userdata = await getUserData(sub);
+            socket.emit("userdata", {username: userdata.name, useremail: userdata.email, userpicture: userdata.picture});
+        } else {
+            console.log("Error: user session not found")
+            socket.emit("errormsg", "Error: user session not found");
+        }
+    });
 });
 
 // Serve static files from the "public" directory
@@ -165,7 +179,7 @@ app.get('/usersession', async (req, res) => {
                 res.send({ loggedin: true, sid: sid, req_ns_data : false });
             })
         }
-    
+
     }
     else {
         res.send({loggedin: false, sid: "" , req_ns_data : false});
