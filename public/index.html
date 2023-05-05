@@ -53,13 +53,20 @@
                       style="border-radius: 10px;">Add Stack</button>
                     <button id="loginbtn" type="button" class="btn btn-outline-dark btn-fw" style="border-radius: 10px;"
                       onclick="location.href='/login';">Login</button>
-                    <div id="profiledropdown" class="userprofiledropdown dropdown pl-4" style="display: none;">
+                    <div id="profiledropdown" class="userprofiledropdown dropdown">
                       <a href="#" class="dropdown-toggle" id="userDropdown" data-toggle="dropdown" aria-haspopup="true"
                         aria-expanded="false">
-                        <img src="images/userprofileimg.png">
+                        <img src="images/userprofileimg.png" alt="User Profile Image">
                       </a>
-                      <div class="dropdown-menu" aria-labelledby="userDropdown">
-                        <a class="dropdown-item" onclick="location.href='/logoutusersession';">Logout</a>
+                      <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+                        <span class="d-none d-md-inline-block ml-4 mr-4 mt-2 mb-3">
+                          <strong id="userprofilename">User Name</strong><br>
+                          <div id="userprofileemail">user@example.com</div>
+                        </span>
+
+                        <div class="text-center">
+                          <button class="btn btn-dark btn-logout" href="/logoutusersession">Logout</button>
+                        </div>
                       </div>
                     </div>
                   </div>

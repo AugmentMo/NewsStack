@@ -1,4 +1,5 @@
 var usersessiondata = {loggedin: false};
+var userdata = {};
 
 function updateUserSessionData(data) {
     usersessiondata.loggedin = data.loggedin;
@@ -46,7 +47,8 @@ fetch('/usersession')
     else {
       // If logged in, once request newsstack data
       if (isLoggedIn()) {
-        socket.emit("getnsdata")
+        socket.emit("getnsdata");
+        socket.emit("getuserdata");
       }
     }
 
@@ -77,4 +79,12 @@ socket.on('nsdata', (data) => {
 
   // on receiving the ns data from server, request all feeds
   requestNewsFeeds();
+});
+
+// load user data
+socket.on('userdata', (data) => {
+  userdata = data;
+  $("#userDropdown > img").attr("src", userdata.userpicture)
+  $('#userprofilename').text(userdata.username); 
+  $('#userprofileemail').text(userdata.useremail);
 });
