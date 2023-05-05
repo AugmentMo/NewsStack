@@ -5,8 +5,6 @@ const DOMPurify = require('isomorphic-dompurify');
 const { DOMParser } = require('xmldom');
 
 
-const url = 'https://news.google.com/rss/articles/CBMiKGh0dHBzOi8vc3BlY3RydW0uaWVlZS5vcmcvZmluZ2VyLWhhcHRpY3PSATdodHRwczovL3NwZWN0cnVtLmllZWUub3JnL2FtcC9maW5nZXItaGFwdGljcy0yNjU5ODg5Mjk5?oc=5';
-
 function fetchAndCropImage(url) {
     return fetch(url)
       .then(response => response.buffer())
