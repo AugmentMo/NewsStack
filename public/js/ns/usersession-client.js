@@ -47,8 +47,10 @@ fetch('/usersession')
     else {
       // If logged in, once request newsstack data
       if (isLoggedIn()) {
-        socket.emit("getnsdata");
-        socket.emit("getuserdata");
+        setTimeout(() => {
+          socket.emit("getnsdata");
+          socket.emit("getuserdata");
+        }, 500);
       }
     }
 
