@@ -2,7 +2,7 @@ var usersessiondata = {loggedin: false};
 var userdata = {};
 
 function updateUserSessionData(data) {
-    usersessiondata.loggedin = data.loggedin;
+  usersessiondata.loggedin = data.loggedin;
 
     if (isLoggedIn()) {
         // Logged in
@@ -13,7 +13,10 @@ function updateUserSessionData(data) {
         $('#profiledropdown').show();
 
         // link socketid
-        socket.emit("linksid", {sid: data.sid});
+      socket.emit("linksid", { sid: data.sid });
+      
+      usersessiondata.sid = data.sid;
+      settid(usersessiondata.sid);
     }
     else {
         // Logged out
@@ -21,7 +24,11 @@ function updateUserSessionData(data) {
         $('#profiledropdown').hide();
         
         // show login
-        $('#loginbtn').show();
+      $('#loginbtn').show();
+      
+      if (!usersessiondata.sid) {
+        settid('unknown-'+generateRandomString(20));
+      }
     }
 }
 

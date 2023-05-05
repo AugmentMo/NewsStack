@@ -7,6 +7,8 @@ const app = express();
 const https = require('https');
 const http = require('http');
 const fs = require('fs');
+var Mixpanel = require('mixpanel');
+var mixpanel = Mixpanel.init('50c39f0643d7aedd6aec85435b9a48d9');
 
 const httpsoptions = {
     key: fs.readFileSync('/app/sslcerts/privkey.pem'),
@@ -83,9 +85,11 @@ io.on("connection", (socket) => {
     socket.on("disconnect", () => {
         console.log("Socket disconnected.");
 
-        const sid = getUserSessionSID(socket.id)
-        removeUserSession(sid);
-
+        const sid = getUserSessionSID(socket.id);
+        if (sid){
+            removeUserSession(sid);
+        }
+        mixpanel.track('Disconnect', {'distinct_id': (sid ? sid : "unknwn")});
     });
     
     // Newsstacks data get request
@@ -148,6 +152,7 @@ app.get('/logoutusersession', (req, res) => {
     console.log("User logging out.");
 
     removeUserSession(req.oidc.user.sid);
+    mixpanel.track('Logout', { 'distinct_id': (req.oidc.user.sid ? req.oidc.user.sid : "unknwn") });
     
     res.redirect('/logout');
 });
@@ -166,6 +171,8 @@ app.get('/usersession', async (req, res) => {
             createUser(sub, req.oidc.user).then(() => {
                 res.send({ loggedin: true, sid: sid, req_ns_data : true });
             });
+
+            mixpanel.track('User Created', {'distinct_id': sid});
         }
         else {
             updateUserData(sub, req.oidc.user).then(() => {
@@ -173,11 +180,14 @@ app.get('/usersession', async (req, res) => {
             }).finally(() => {
                 res.send({ loggedin: true, sid: sid, req_ns_data : false });
             })
+            mixpanel.track('Visit', { 'distinct_id': sid});
+            mixpanel.track('Login', {'distinct_id': sid});
         }
 
     }
     else {
-        res.send({loggedin: false, sid: "" , req_ns_data : false});
+        res.send({ loggedin: false, sid: "", req_ns_data: false });
+        mixpanel.track('Visit', { 'distinct_id': "unknwn"});
     }
 });
 

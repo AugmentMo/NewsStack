@@ -58,7 +58,7 @@ function registerButtonEventListener() {
 
     // Register trash button click event listener
     // Allows deleting stacks
-    $(".btn-newscol-trash").on("click", (event) => {
+    $(".btn-newscol-trash").on("click", (event) => {    
         event.stopPropagation();
         event.stopImmediatePropagation();
         const stackid = $(event.currentTarget).attr('data-stack-id');
@@ -90,7 +90,8 @@ function registerButtonEventListener() {
             }
             }
             }
-            });
+        });
+        trk("Stack Trash Buttion", "click")
     });
 
     // Register settings button click event listener
@@ -153,7 +154,11 @@ function registerButtonEventListener() {
             }
             }
             }
-            });
+        });
+        trk("Stack Settings Buttion", "click");
     });
+
+    
+
     
 }
