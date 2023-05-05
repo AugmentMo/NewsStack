@@ -4,7 +4,7 @@
 Follow the topics and headlines that really interest you and track them all in one view!
 
 
-<img src="https://user-images.githubusercontent.com/62531877/236111068-8467a3be-a6f5-40cc-8644-e0e84f50798f.png" alt= “” width="800px">
+<img src="https://user-images.githubusercontent.com/62531877/236419360-a1d37ff7-f66a-45a1-8389-94c52e2702bc.png" alt= “” width="800px">
 Website: https://newsstack.info
 
 ## Supported News Platforms
@@ -16,7 +16,7 @@ Website: https://newsstack.info
 ## Next Up
 
 1. ~~Switch to HTTPS/SSL~~
-2. Auth0 implementation – user profile accessible via any device (in progress)
+2. ~~Auth0 implementation – user profile accessible via any device (in progress)~~
 3. More dynamic content loading – Speed up loading news
 4. Implement caching of news data – Speed up loading news 
 5. Add Search String Tipps – Show users how to use the search string effectively 
