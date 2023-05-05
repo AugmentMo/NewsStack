@@ -27,12 +27,16 @@ function getFormattedDate(dateString) {
     const date = new Date(dateString);
 
     // Format the date string in a nice format
-    const formattedDate = date.toLocaleDateString("en-US", {
+    var formattedDate = date.toLocaleDateString("en-US", {
     weekday: "long",
     year: "numeric",
     month: "long",
     day: "numeric"
     });
+
+    if (formattedDate == "Invalid Date") {
+        formattedDate = ""
+    }
 
     return formattedDate;
 }
