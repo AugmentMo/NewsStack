@@ -30626,7 +30626,7 @@ div.tagsinput span.tag a {
 
 
 .userprofiledropdown {
-  display: none;
+  display: inline-block;
   width: 200;
 } 
 .userprofiledropdown img {
