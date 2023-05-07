@@ -17,11 +17,30 @@ $("#addnewsstackbtn").on("click", (event) => {
 
     <br><br>
 
-    <label for="keyword-string">Keyword String:</label><br>
+    <label for="keyword-string">Search String:</label><br>
     <input type="text" id="keyword-string">
+
+    <br><br>
+
+
 </div>
 
         `,
+        onShown: function() {
+            // Add keyword string tooltip
+            $('#keyword-string').attr('data-toggle', 'tooltip');
+            $('#keyword-string').attr('data-placement', 'right');
+        
+            $('#keyword-string').attr('data-boundary', 'viewport');
+            $('#keyword-string').attr('data-boundary-padding', '10');
+        
+            $('#keyword-string').attr('title', '<strong>Search String Tips:</strong><br><br><ul><li>Enter keywords sparated by whitespaces.</li><li>Use <strong>+keyword</strong> to force including a keyword.</li><li>Use <strong>-keyword</strong> to exclude a keyword.</li><li>Use <strong>site:website.com</strong> to only include a certain website.</li></ul>');
+                        $('#keyword-string').tooltip({ html: true, placement: 'right' });
+                        setTimeout(() => {
+                            $('#keyword-string').tooltip("show");    
+                        }, 500);
+            
+                      },
         size: 'medium',
         buttons: {
         cancel: {
@@ -43,14 +62,19 @@ $("#addnewsstackbtn").on("click", (event) => {
             // Log the values to the console
             console.log(`Stack Title: ${stackTitle}`);
             console.log(`News Source: ${newsSource}`);
-            console.log(`Keyword String: ${keywordString}`);
+            console.log(`Search String: ${keywordString}`);
             addNewFeed(stackTitle, stackID, keywordString, newsSource);
             requestNewsFeed(stackID);
             updateNewsFeedsDisplay();
         }
+            }
+      
         }
-        }
-        });
+    });
+    
+
+
+
 });
 
 
