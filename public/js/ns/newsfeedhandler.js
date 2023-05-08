@@ -44,30 +44,41 @@ function getFormattedDate(dateString) {
 function addItemToFeed(feedid, item) {
     const container = document.getElementById('newsfeeditems-'+feedid);
 
+    // Title
     const title = document.createElement('p');
     title.classList.add("card-title");
-    title.innerHTML = item.title;
+    if (item.title) {
+        title.innerHTML = item.title;
+    }
 
+    // Description
     const description = document.createElement('p');
-    description.classList.add("font-weight-500")
-    description.innerHTML = item.metadescr;
+    description.classList.add("font-weight-500");
+    if (item.metadescr){
+        description.innerHTML = item.metadescr;
+    }
 
-    const url = document.createElement('a');
-    url.classList.add("font-weight-500")
-    url.innerHTML = 'Read more';
-    url.href = item.linkurl;
-    url.target = '_blank';
+    // Url
+    // const url = document.createElement('a');
+    // url.classList.add("font-weight-500")
+    // url.innerHTML = 'Read more';
+    // url.target = '_blank';
+    // url.href = item.linkurl;
 
+    // Publish date
     const pubdate = document.createElement('p');
     pubdate.classList.add("font-weight-500")
-    pubdate.innerHTML = getFormattedDate(item.pubdate);
+    if (item.pubdate) {
+        pubdate.innerHTML = getFormattedDate(item.pubdate);
+    }
 
+    // Image
     const imageContainer = document.createElement('div');
     imageContainer.classList.add('col');
     imageContainer.classList.add('d-flex');
     // imageContainer.classList.add('justify-content-end');
     imageContainer.classList.add('align-self-center');
-    if (item.imagesrc != undefined) {
+    if (item.imagesrc != undefined && item.imagesrc) {
     imageContainer.innerHTML = '<img src="' + item.imagesrc + '" alt="' + item.title + '" style="width: 100px; height: 100px;">';
     }
 
@@ -92,19 +103,18 @@ function addItemToFeed(feedid, item) {
 
 
     const feedElement = document.createElement('a');
-    feedElement.href = item.linkurl;
     feedElement.target = '_blank';
     feedElement.classList.add('card');
     feedElement.classList.add('m-2');
     feedElement.classList.add('feeditem');
+    if (item.linkurl) {
+        feedElement.href = item.linkurl;
+    }
 
     rowElement.appendChild(textContainer);
     rowElement.appendChild(imageContainer);
-
     feedElement.appendChild(rowElement);
-
     container.appendChild(feedElement);
-
 }
 
 function clearNewsContainer() {
@@ -194,12 +204,36 @@ function deleteFeed(feedid) {
     delete newsfeeds[feedid];
     saveSessionData();
     saveNSData();
+    updateNewsFeedContainers();
 }
 
 function addNewFeedItem(item) {
     // add item and sort
     const feedid = item.feedid;
     newsfeeds[feedid]["feeditems"].push(item);
+}
+
+function updateFeedItem(feedItem) {
+    console.log("updating feed item", feedItem)
+    const feedid = feedItem.feedid;
+    let feedItemsArray = newsfeeds[feedid]["feeditems"];
+    
+    // Check if the feed item already exists in the feed items array
+    var existingFeedItemIndex = feedItemsArray.findIndex(function(item) {
+        return item.itemnumber === feedItem.itemnumber;
+    });
+    
+    if (existingFeedItemIndex !== -1) {
+        console.log("FOUND and UPDATING", existingFeedItemIndex)
+        // If the feed item already exists, update its values
+        feedItemsArray[existingFeedItemIndex] = feedItem;
+    } else {
+        console.log("NOT FOUND and CREATING")
+
+        // If the feed item does not exist, add it as a new element
+        feedItemsArray.push(feedItem);
+    }
+      
 }
 
 function requestNewsFeed(feedid) {
@@ -213,7 +247,7 @@ function requestNewsFeeds() {
 }
 
 socket.on('newsfeeditem', (item) => {
-    addNewFeedItem(item);
+    updateFeedItem(item);
     updateNewsFeedsItems();
 });
 

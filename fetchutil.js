@@ -5,6 +5,18 @@ const DOMPurify = require('isomorphic-dompurify');
 const { DOMParser } = require('xmldom');
 
 
+// Loading process:
+// 1. grab news from google
+// 2. fetch redirect link
+// 3. grab metadata from redirect link
+// 4. grab image from metadata
+
+// Dynamic loading: 
+// 1. send titles immediately
+// 2. send metadata
+// 3. send images 
+// All independent
+
 function fetchAndCropImage(url) {
     return fetch(url)
       .then(response => response.buffer())
@@ -153,10 +165,12 @@ async function getMetaFeedData(googlenewslink) {
 
 
 function collectNews(socket, newsfeed) {
+    let feedid = newsfeed["feedid"];
     const url = 'https://news.google.com/rss/search?q='+newsfeed["feedkeywordstr"]+'&hl=en-NZ&gl=NZ&ceid=NZ:en';
     fetch(url)
       .then(response => response.text())
-      .then(async data => {
+        .then(async data => {
+
           const parser = new DOMParser();
           let relinkdata = data.replace(/<link>/g, "<relink>").replace(/<\/link>/g, "</relink>"); // this is ugly but dompurify sanitieser removes </link> as we are dealing with XML
 
@@ -173,13 +187,18 @@ function collectNews(socket, newsfeed) {
             let title = items[i].getElementsByTagName('title')[0].textContent;
             let description = items[i].getElementsByTagName('description')[0].textContent;
             let linkurl = items[i].getElementsByTagName('relink')[0].textContent;
-                
+            
+            // 1. send titles + google redirect url immediately
+            let feeditem = { itemnumber, feedid, title, linkurl };
+            socket.emit('newsfeeditem', feeditem);
+              
             //////
             let imagesrc = "";
             let metadescr = "";
             let pubdate = "";
                 getMetaFeedData(linkurl)
-                .then(metadata => {
+                    .then(metadata => {
+
                     if (metadata != undefined) {
                         if (metadata["m_description"]) {
                             metadescr = metadata["m_description"]
@@ -193,11 +212,16 @@ function collectNews(socket, newsfeed) {
                         if (metadata["m_img"]) {
                             return fetchAndCropImage(metadata["m_img"]);
                         }
+
+                        // 2. Send updated metadata, direct link, without image
+                        let feeditem = { itemnumber, feedid, title, description, linkurl, metadescr, pubdate };
+                        socket.emit('newsfeeditem', feeditem);
+            
                     }
-                })
-                .then(imagedata => {
+                }).then(imagedata => {
                     imagesrc = imagedata;
-                    let feedid = newsfeed["feedid"];
+
+                    // 3. Send full data
                     let feeditem = { itemnumber, feedid, title, description, linkurl, metadescr, imagesrc, pubdate };
                     socket.emit('newsfeeditem', feeditem);
                 })
