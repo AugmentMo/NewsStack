@@ -10,12 +10,12 @@ const fs = require('fs');
 var Mixpanel = require('mixpanel');
 var mixpanel = Mixpanel.init('50c39f0643d7aedd6aec85435b9a48d9');
 
-const httpsoptions = {
-    key: fs.readFileSync('/app/sslcerts/privkey.pem'),
-    cert: fs.readFileSync('/app/sslcerts/fullchain.pem')
-};
+// const httpsoptions = {
+//     key: fs.readFileSync('/app/sslcerts/privkey.pem'),
+//     cert: fs.readFileSync('/app/sslcerts/fullchain.pem')
+// };
 
-const httpsServer = https.createServer(httpsoptions, app);
+const httpsServer = http.createServer( app);
 const { Server } = require("socket.io");
 const io = new Server(httpsServer);
 require('dotenv').config();
@@ -192,15 +192,15 @@ app.get('/usersession', async (req, res) => {
 });
 
 // Start the server
-httpsServer.listen(443, () => {
+httpsServer.listen(80, () => {
     console.log('HTTPS server started on port 443');
 });
   
 // Redirect HTTP to HTTPS
-const httpServer = express();
-httpServer.get('*', (req, res) => {
-    res.redirect('https://' + req.headers.host + req.url);
-});
-httpServer.listen(80, () => {
-    console.log('HTTP server started on port 80');
-});
+// const httpServer = express();
+// httpServer.get('*', (req, res) => {
+//     res.redirect('https://' + req.headers.host + req.url);
+// });
+// httpServer.listen(80, () => {
+//     console.log('HTTP server started on port 80');
+// });

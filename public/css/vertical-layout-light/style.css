@@ -30675,3 +30675,25 @@ div.tagsinput span.tag a {
 .tooltip-inner strong {
   font-weight: bold;
 }
+
+.shepherd-modal-overlay-container {
+  opacity: 0.5; 
+}
+
+.shepherd-button {
+  background: black;
+}
+
+.shepherd-button:not(:disabled) {
+  background: black;
+}
+
+
+.shepherd-button:not(:disabled):hover {
+  background: gray !important;
+}
+
+.shepherd-button:hover {
+  background: gray !important;
+}
+
