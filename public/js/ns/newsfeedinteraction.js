@@ -65,7 +65,7 @@ $("#addnewsstackbtn").on("click", (event) => {
             console.log(`Search String: ${keywordString}`);
             addNewFeed(stackTitle, stackID, keywordString, newsSource);
             requestNewsFeed(stackID);
-            updateNewsFeedsDisplay();
+            updateNewsFeedContainers();
         }
             }
       
@@ -174,7 +174,7 @@ function registerButtonEventListener() {
                 console.log(`Keyword String: ${keywordString}`);
                 updateFeed(stackid, stackTitle, keywordString, newsSource, []);
                 requestNewsFeed(stackid);
-                updateNewsFeedsDisplay();
+                updateNewsFeedContainers()
             }
             }
             }

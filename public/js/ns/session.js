@@ -31,11 +31,13 @@ function useLocalStorageSession() {
         addNewFeed("Competitive Eating", "competitiveeating", "Competitive Eating", "googlenewsrss");
         addNewFeed("Artificial Intelligence", "artificialintelligence", "Artificial Intelligence", "googlenewsrss");
 
+        updateNewsFeedContainers();
         requestNewsFeeds();
     }
     else {
         console.log("Found prior session. Loading prior session feeds..");
         loadSessionData();
+        updateNewsFeedContainers();
         requestNewsFeeds();
     }
 }

@@ -112,19 +112,36 @@ function clearNewsContainer() {
     container.innerHTML = "";
 }
 
-function updateNewsFeedsDisplay() {
+function clearNewsFeedItems(feedid) {
+    const container = document.getElementById('newsfeeditems-'+feedid);
+    container.innerHTML = "";
+}
+
+
+function updateNewsFeedContainers() {
     clearNewsContainer();
 
     for (const feedid in newsfeeds) {
         var newsfeed = newsfeeds[feedid]["feeditems"];
 
+        // add news feed column to html
+        htmlAddFeed(feedid);
+    }
+
+    registerButtonEventListener();
+}
+
+function updateNewsFeedsItems() {
+
+    for (const feedid in newsfeeds) {
+        var newsfeed = newsfeeds[feedid]["feeditems"];
+
+        clearNewsFeedItems(feedid);
+
         // sort news feed
         newsfeed.sort((a, b) => {
             return (a.itemnumber < b.itemnumber ? -1 : 1);
         });
-
-        // add news feed column to html
-        htmlAddFeed(feedid);
 
         // add each item
         for (const feeditem of newsfeed) { 
@@ -132,7 +149,6 @@ function updateNewsFeedsDisplay() {
         }
     }
 
-    registerButtonEventListener();
 }
 
 function addNewFeed(feedtitle, feedid, feedkeywordstr, newssource) {
@@ -198,6 +214,6 @@ function requestNewsFeeds() {
 
 socket.on('newsfeeditem', (item) => {
     addNewFeedItem(item);
-    updateNewsFeedsDisplay();
+    updateNewsFeedsItems();
 });
 
