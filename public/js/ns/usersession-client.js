@@ -91,6 +91,7 @@ socket.on('nsdata', (data) => {
   newsfeeds = data;
 
   // on receiving the ns data from server, request all feeds
+  updateNewsFeedContainers();
   requestNewsFeeds();
 });
 
