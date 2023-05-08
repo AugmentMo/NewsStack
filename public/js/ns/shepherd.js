@@ -113,10 +113,14 @@ function startOnboardingTour() {
     if (!tourcompleted) {
         setTimeout(() => {
             tour.start();
-        }, 1000);
+        }, 2000);
         setCookie("onboarding_tour_v0.01", "done", 365);
     }
 
 }
 
-startOnboardingTour();
+// Check if the device is not mobile
+if (!(/Mobi|Android/i.test(navigator.userAgent))) {
+  // Call the function on non-mobile devices
+  startOnboardingTour();
+}
