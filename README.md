@@ -11,7 +11,9 @@ Website: https://newsstack.info
 
 1. ✅ Google News (RSS Feed)
 2. ❌ Twitter (coming soon⌛️)
-3. ❌ Semantic Scholar (coming soon⌛️)
+3. ❌ Reddit (coming soon⌛️)
+4. ❌ Google Scholar (coming soon⌛️)
+5. ❌ Semantic Scholar (coming soon⌛️)
 
 ## Next Up
 
