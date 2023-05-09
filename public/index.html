@@ -75,6 +75,10 @@
                 </li>
                 <!-- Login -->
                 <li class="nav-item">
+                  <a id="feedbackbtn" class="nav-link">Feedback</a>
+                </li>
+                <!-- Login -->
+                <li class="nav-item">
                   <a id="loginbtn" class="nav-link" href="/login" onclick="location.href='/login';">Login</a>
                 </li>
                 <!-- Profile Drop Down -->
@@ -118,6 +122,13 @@
     </div>
     <!-- page-body-wrapper ends -->
   </div>
+
+  <!-- Feedback button -->
+  <div id="feedback-button" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;">
+    <a href="#" onclick="showFeedbackModal();">
+      <img src="images/feedback.png" alt="Feedback" height="75px">
+    </a>
+  </div>
   <!-- container-scroller -->
 
   <!-- plugins:js -->
@@ -142,6 +153,7 @@
   <script src="js/ns/usersession-client.js"></script>
   <script src="js/ns/mixpanel.js"></script>
   <script src="js/ns/shepherd.js"></script>
+  <script src="js/ns/feedback.js"></script>
 
   <!-- End custom js for this page-->
 </body>
