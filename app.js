@@ -142,10 +142,11 @@ io.on("connection", (socket) => {
     // User feedback
     socket.on("sendfeedback", async (data) => {
         let feedbackdata = data;
-        
-        if (isNsDataValidated(feedbackdata)){
-            feedbackdata['distinct_id'] = (req.oidc.user.sid ? req.oidc.user.sid : "unknwn");
-            mixpanel.track('feedback', feedbackdata);
+        const sid = getUserSessionSID(socket.id);
+
+        if (isNsDataValidated(feedbackdata)) {
+            feedbackdata['distinct_id'] = (sid ? sid : "unknwn");
+            mixpanel.track('Feedback', feedbackdata);
         }
     });
 });

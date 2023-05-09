@@ -52,9 +52,9 @@ function showFeedbackModal() {
             const feedbacktext = $('#feedback-textarea').val();
             
             let feedbackdata = {
-                "nickname": nickname,
-                "email": email,
-                "text": feedbacktext
+                "feedback-nickname": nickname,
+                "feedback-email": email,
+                "feedback-text": feedbacktext
             };
 
             if (feedbacktext.length > 0){
