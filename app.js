@@ -138,6 +138,16 @@ io.on("connection", (socket) => {
             socket.emit("errormsg", "Error: user session not found");
         }
     });
+
+    // User feedback
+    socket.on("sendfeedback", async (data) => {
+        let feedbackdata = data;
+        
+        if (isNsDataValidated(feedbackdata)){
+            feedbackdata['distinct_id'] = (req.oidc.user.sid ? req.oidc.user.sid : "unknwn");
+            mixpanel.track('feedback', feedbackdata);
+        }
+    });
 });
 
 // Serve static files from the "public" directory
