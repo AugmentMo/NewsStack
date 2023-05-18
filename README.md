@@ -1,4 +1,4 @@
-# [NewsStack.info](https://newsstack.info) – Your personalised stack of news.
+# [NewsStack.info](https://newsstack.info) – Curate news stacks that matter to you.
 
 
 Follow the topics and headlines that really interest you and track them all in one view!
