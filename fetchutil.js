@@ -3,6 +3,7 @@ const { JSDOM } = require("jsdom");
 const sharp = require('sharp');
 const DOMPurify = require('isomorphic-dompurify');
 const { DOMParser } = require('xmldom');
+const crypto = require('crypto');
 
 
 // Loading process:
@@ -16,6 +17,15 @@ const { DOMParser } = require('xmldom');
 // 2. send metadata
 // 3. send images 
 // All independent
+function createHash(text) {
+    const hash = crypto.createHash('sha256');
+    hash.update(text);
+    return hash.digest('hex');
+}
+
+function createFeedItemUID(content) {
+    return createHash(content);
+}
 
 function fetchAndCropImage(url) {
     return fetch(url)
@@ -187,9 +197,10 @@ function collectNews(socket, newsfeed) {
             let title = items[i].getElementsByTagName('title')[0].textContent;
             let description = items[i].getElementsByTagName('description')[0].textContent;
             let linkurl = items[i].getElementsByTagName('relink')[0].textContent;
+            let fuid = createFeedItemUID(title+description);
             
             // 1. send titles + google redirect url immediately
-            let feeditem = { itemnumber, feedid, title, linkurl };
+            let feeditem = { itemnumber, feedid, title, linkurl, fuid };
             socket.emit('newsfeeditem', feeditem);
               
             //////
@@ -214,7 +225,7 @@ function collectNews(socket, newsfeed) {
                         }
 
                         // 2. Send updated metadata, direct link, without image
-                        let feeditem = { itemnumber, feedid, title, description, linkurl, metadescr, pubdate };
+                        let feeditem = { itemnumber, feedid, title, description, linkurl, metadescr, pubdate, fuid };
                         socket.emit('newsfeeditem', feeditem);
             
                     }
@@ -222,7 +233,7 @@ function collectNews(socket, newsfeed) {
                     imagesrc = imagedata;
 
                     // 3. Send full data
-                    let feeditem = { itemnumber, feedid, title, description, linkurl, metadescr, imagesrc, pubdate };
+                    let feeditem = { itemnumber, feedid, title, description, linkurl, metadescr, imagesrc, pubdate, fuid };
                     socket.emit('newsfeeditem', feeditem);
                 })
                 .catch(error => console.error("could not fetch"));
