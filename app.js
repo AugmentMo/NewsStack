@@ -49,7 +49,7 @@ function cleanUpNewsFeedReq(newsfeed) {
     const clean_feedid = cleanUpString(newsfeed["feedid"])
     const clean_feedkeywordstr = cleanUpString(newsfeed["feedkeywordstr"])
 
-    return {"feedid": clean_feedid ,"feedkeywordstr": clean_feedkeywordstr}
+    return { "feedid": clean_feedid, "feedkeywordstr": clean_feedkeywordstr, "startindex": newsfeed["startindex"], "count":  newsfeed["count"]}
 }
 
 const MAX_NSDATA_SIZE = 10240; // Maximum storage data
@@ -73,7 +73,17 @@ io.on("connection", (socket) => {
     socket.on("getnews", (newsfeed) => {
         console.log("news request")
         const cleannewsfeed = cleanUpNewsFeedReq(newsfeed);
-        collectNews(socket, cleannewsfeed)
+        var startindex = 0;
+        var count = 10;
+
+        if (cleannewsfeed['startindex'] != undefined) {
+            startindex = cleannewsfeed['startindex'];
+        }
+        if (cleannewsfeed['count'] != undefined) {
+            count = cleannewsfeed['count'];
+        }
+        
+        collectNews(socket, cleannewsfeed, startindex, count);
     });
 
     // Link socketid with sid

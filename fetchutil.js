@@ -174,7 +174,7 @@ async function getMetaFeedData(googlenewslink) {
 }
 
 
-function collectNews(socket, newsfeed) {
+function collectNews(socket, newsfeed, startindex, count) {
     let feedid = newsfeed["feedid"];
     const url = 'https://news.google.com/rss/search?q='+newsfeed["feedkeywordstr"]+'&hl=en-NZ&gl=NZ&ceid=NZ:en';
     fetch(url)
@@ -190,9 +190,10 @@ function collectNews(socket, newsfeed) {
 
         const xml = parser.parseFromString(cleanData, 'text/xml');
         const items = xml.getElementsByTagName('item');
-          const maxitem = 10; //items.length;
+            
+            const maxitem = Math.min(items.length, startindex + count);
 
-          for (let i = 0; i < maxitem; i++) {
+          for (let i = startindex; i < maxitem; i++) {
             let itemnumber = i;
             let title = items[i].getElementsByTagName('title')[0].textContent;
             let description = items[i].getElementsByTagName('description')[0].textContent;

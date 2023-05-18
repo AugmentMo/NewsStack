@@ -117,6 +117,35 @@ function addItemToFeed(feedid, item) {
     container.appendChild(feedElement);
 }
 
+function addLoadMoreItemToFeed(feedid) {
+
+    // `<div class="card feeditem m-2">
+    //     <button type="button" class="btn btn-outline-dark btn-fw" style="border-radius: 10px;">
+    //     Load More
+    //     </button>
+    // </div>`
+    const container = document.getElementById('newsfeeditems-'+feedid);
+
+    // Create the outer div element
+    const divElement = document.createElement('div');
+    divElement.classList.add('card', 'feeditem', 'm-2');
+
+    // Create the button element
+    const buttonElement = document.createElement('button');
+    buttonElement.type = 'button';
+    buttonElement.classList.add('btn', 'btn-outline-dark', 'btn-fw');
+    buttonElement.style.borderRadius = '10px';
+    buttonElement.textContent = 'Load More';
+    buttonElement.addEventListener('click', function () {
+        requestMoreFeedItems(feedid);
+    });
+
+    // Append the button element to the div element
+    divElement.appendChild(buttonElement);
+
+    container.appendChild(divElement);
+}
+
 function clearNewsContainer() {
     const container = document.getElementById('news-container');
     container.innerHTML = "";
@@ -157,6 +186,9 @@ function updateNewsFeedsItems() {
         for (const feeditem of newsfeed) { 
             addItemToFeed(feedid, feeditem)
         }
+
+        // Add load more item
+        addLoadMoreItemToFeed(feedid);
     }
 
 }
@@ -239,6 +271,11 @@ function updateFeedItem(feedItem) {
 function requestNewsFeed(feedid) {
     socket.emit("getnews", {"feedid": feedid, "feedkeywordstr": newsfeeds[feedid]["feedkeywordstr"]});
 }
+
+function requestMoreFeedItems(feedid) {
+    socket.emit("getnews", {"feedid": feedid, "feedkeywordstr": newsfeeds[feedid]["feedkeywordstr"], "startindex": newsfeeds[feedid]["feeditems"].length, "count": 5});
+}
+
 
 function requestNewsFeeds() {
     for (const feedid in newsfeeds) {
