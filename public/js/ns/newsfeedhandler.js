@@ -118,12 +118,6 @@ function addItemToFeed(feedid, item) {
 }
 
 function addLoadMoreItemToFeed(feedid) {
-
-    // `<div class="card feeditem m-2">
-    //     <button type="button" class="btn btn-outline-dark btn-fw" style="border-radius: 10px;">
-    //     Load More
-    //     </button>
-    // </div>`
     const container = document.getElementById('newsfeeditems-'+feedid);
 
     // Create the outer div element
