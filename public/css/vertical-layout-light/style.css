@@ -13784,7 +13784,7 @@ input[type="button"].btn-block {
   background-color: #fff;
   background-clip: border-box;
   border: 1px solid #e3e3e3;
-  border-radius: 20px;
+  /* border-radius: 20px; */
 }
 
 .card > hr {
@@ -24659,7 +24659,7 @@ dl li {
   background: #f6f8fa;
   color: #000000;
   border-radius: 0;
-  border: 1px solid #CED4DA;
+  /* border: 1px solid #CED4DA; */
   padding: .75rem 1.5rem;
 }
 

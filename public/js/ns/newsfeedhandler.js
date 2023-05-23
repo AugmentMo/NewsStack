@@ -41,8 +41,8 @@ function getFormattedDate(dateString) {
     return formattedDate;
 }
 
-function addItemToFeed(feedid, item) {
-    const container = document.getElementById('newsfeeditems-'+feedid);
+function addItemToFeedTab(feedid, item, tabidprefix) {
+    const container = document.getElementById(tabidprefix + feedid);
 
     // Title
     const title = document.createElement('p');
@@ -105,7 +105,7 @@ function addItemToFeed(feedid, item) {
     const feedElement = document.createElement('a');
     feedElement.target = '_blank';
     feedElement.classList.add('card');
-    feedElement.classList.add('m-2');
+    feedElement.classList.add('mt-2');
     feedElement.classList.add('feeditem');
     if (item.linkurl) {
         feedElement.href = item.linkurl;
@@ -118,8 +118,8 @@ function addItemToFeed(feedid, item) {
 }
 
 function addLoadMoreItemToFeed(feedid) {
-    const container = document.getElementById('newsfeeditems-'+feedid);
-
+    const container = document.getElementById("tab-news-"+feedid);
+    
     // Create the outer div element
     const divElement = document.createElement('div');
     divElement.classList.add('card', 'feeditem', 'm-2');
@@ -146,8 +146,10 @@ function clearNewsContainer() {
 }
 
 function clearNewsFeedItems(feedid) {
-    const container = document.getElementById('newsfeeditems-'+feedid);
-    container.innerHTML = "";
+    // Clear all tabs
+    document.getElementById("tab-bookmarks-" + feedid).innerHTML = "";
+    document.getElementById("tab-archive-" + feedid).innerHTML = "";
+    document.getElementById("tab-news-" + feedid).innerHTML = "";
 }
 
 
@@ -164,6 +166,14 @@ function updateNewsFeedContainers() {
     registerButtonEventListener();
 }
 
+function isItemBookmarked(feedid, feeditem) {
+    return false
+}
+
+function isItemArchived(feedid, feeditem) {
+    return false
+}
+
 function updateNewsFeedsItems() {
 
     for (const feedid in newsfeeds) {
@@ -178,7 +188,16 @@ function updateNewsFeedsItems() {
 
         // add each item
         for (const feeditem of newsfeed) { 
-            addItemToFeed(feedid, feeditem)
+            if (isItemBookmarked(feedid, feeditem)) {
+                addItemToFeedTab(feedid, feeditem, "tab-bookmarks-")
+            }
+            else if (isItemArchived(feedid, feeditem)) {
+                addItemToFeedTab(feedid, feeditem, "tab-archive-")
+            }
+            else {
+                addItemToFeedTab(feedid, feeditem, "tab-news-")
+            }
+            
         }
 
         // Add load more item
@@ -213,15 +232,31 @@ function htmlAddFeed(feedid) {
         <div style="display: flex; justify-content: space-between; align-items: center; padding-left: 1.25rem; padding-right: 1.25rem;">
             <h3 style="margin: 0;">`+feedtitle+`</h3>
             <div style="display: flex; align-items: center;">
-                <button data-stack-id="`+feedid+`" type="button" class="btn btn-newscol btn-newscol-settings btn-rounded btn-icon" style="margin-right: 0.5rem;">
+                <button data-stack-id="`+feedid+`" type="button" class="btn btn-newscol btn-newscol-settings btn-icon" style="margin-right: 0.5rem;">
                     <i class="ti-settings text-dark"></i>
                 </button>
-                <button data-stack-id="`+feedid+`" type="button" class="btn btn-newscol btn-newscol-trash btn-rounded btn-icon">
+                <button data-stack-id="`+feedid+`" type="button" class="btn btn-newscol btn-newscol-trash btn-icon">
                     <i class="ti-trash text-dark"></i>
                 </button>
             </div>
         </div>
-        <div id="newsfeeditems-`+feedid+`"></div>
+                
+        <ul class="nav nav-tabs nav-justified" id="newsfeedtab-nav-`+ feedid +`" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="tab-news-`+ feedid +`-tab" data-bs-toggle="tab" data-bs-target="#tab-news-`+ feedid +`" type="button" role="tab" aria-controls="tab-news-`+ feedid +`" aria-selected="true">News</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="tab-bookmarks-`+ feedid +`-tab" data-bs-toggle="tab" data-bs-target="#tab-bookmarks-`+ feedid +`" type="button" role="tab" aria-controls="tab-bookmarks-`+ feedid +`" aria-selected="false">Bookmarks</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="tab-archive-`+ feedid +`-tab" data-bs-toggle="tab" data-bs-target="#tab-archive-`+ feedid +`" type="button" role="tab" aria-controls="tab-archive-`+ feedid +`" aria-selected="false">Archive</button>
+            </li>
+        </ul>
+        <div class="tab-content p-0 border-0" id="newsfeedtab-content-`+ feedid +`">
+            <div class="tab-pane fade show active" id="tab-news-`+ feedid +`" role="tabpanel" aria-labelledby="tab-news-`+ feedid +`-tab"></div>
+            <div class="tab-pane fade" id="tab-bookmarks-`+ feedid +`" role="tabpanel" aria-labelledby="tab-bookmarks-`+ feedid +`-tab"></div>
+            <div class="tab-pane fade" id="tab-archive-`+ feedid +`" role="tabpanel" aria-labelledby="tab-archive-`+ feedid +`-tab"></div>
+        </div>
     </div>
     `
 }
