@@ -109,6 +109,7 @@ function registerFeedItemButtonEventListeners() {
         }
 
         updateNewsFeedsItems();
+        saveNSData();
     });
 
     $(".btn-newsitem-bookmark").on("click", (event) => {
@@ -138,6 +139,7 @@ function registerFeedItemButtonEventListeners() {
         }
 
         updateNewsFeedsItems();
+        saveNSData();
     });
 }
 
