@@ -91,7 +91,7 @@ function updateBookmarksAndArchive(stacks) {
 // save ns data to user db
 function saveNSData() {
   // create a copy of newsfeed data
-  var savensdata = Object.assign({}, newsfeeds);
+  var savensdata = JSON.parse(JSON.stringify(newsfeeds));
 
   // clear all feed items
   for (const feedid in savensdata) {
