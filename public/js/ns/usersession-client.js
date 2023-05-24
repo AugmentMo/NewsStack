@@ -70,6 +70,23 @@ fetch('/usersession')
     console.error('Error:', error);
   });
 
+function updateBookmarksAndArchive(stacks) {
+  var result = []
+  for (const feedid in stacks) {
+    var newstack = stacks[feedid];
+
+    if (!("bookmarks" in newstack)) {
+      newstack["bookmarks"] = [];
+    }
+    if (!("archive" in newstack)) {
+      newstack["archive"] = [];
+    }
+
+    result.push(newstack);
+  }
+
+  return result;
+}
 
 // save ns data to user db
 function saveNSData() {
@@ -81,15 +98,17 @@ function saveNSData() {
     savensdata[feedid]["feeditems"] = [];
   }
 
+  savensdata = updateBookmarksAndArchive(savensdata)
+
   // send data to server
   socket.emit("updatensdata", savensdata);
 }
 
 // load ns data from user db
 socket.on('nsdata', (data) => {
-    // handle incoming newsstack data
-  newsfeeds = data;
-
+  // handle incoming newsstack data
+  newsfeeds = updateBookmarksAndArchive(data);
+  
   // on receiving the ns data from server, request all feeds
   updateNewsFeedContainers();
   requestNewsFeeds();

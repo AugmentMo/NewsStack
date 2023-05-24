@@ -13,6 +13,7 @@ function loadSessionData() {
     const sessiondata_jsonstr = localStorage.getItem('newsstacksession');
     const sessiondata = JSON.parse(sessiondata_jsonstr);
     newsfeeds = sessiondata["newsfeeds"];
+    newsfeeds = updateBookmarksAndArchive(newsfeeds);
 }
 
 function clearSessionData() {

@@ -87,10 +87,10 @@ function addItemToFeedTab(feedid, item, tabidprefix) {
     htmlstr = `
     <div class="col" style="height: 100%; padding-left: 0px;">
         <div style="position: absolute; right: 20px; top: 22px; width: 90px; justify-content: end;" class="row">
-                <button data-stack-id="`+feedid+`" type="button" class="btn btn-newscol btn-newscol-settings btn-icon" style="display: inline-flex; width: 30px;">
+                <button data-stack-id="`+feedid+`" data-fuid="`+item.fuid+`" type="button" class="btn btn-newscol btn-newsitem-bookmark btn-icon" style="display: inline-flex; width: 30px;">
                     <i class="ti-bookmark text-dark"></i>
                 </button>
-                <button data-stack-id="`+feedid+`" type="button" class="btn btn-newscol btn-newscol-trash btn-icon" style="display: inline-flex; width: 30px;">
+                <button data-stack-id="`+feedid+`" data-fuid="`+item.fuid+`" type="button" class="btn btn-newscol btn-newsitem-archiv btn-icon" style="display: inline-flex; width: 30px;">
                     <i class="ti-check text-dark" style=""></i>
                 </button>
         </div>
@@ -136,23 +136,7 @@ function addItemToFeedTab(feedid, item, tabidprefix) {
         }
       });
     container.appendChild(feedElement);
-
-    // <div class="col d-flex" style="">
-        // <div class="col" style="height: 100%;">
-        //     <div style="justify-content: end; margin-right: 0px; margin-top: -10px;" class="row">
-        //         <button data-stack-id="marsrovers" type="button" class="btn btn-newscol btn-newscol-settings btn-icon" style="margin-top: -20px;">
-        //             <i class="ti-settings text-dark"></i>
-        //         </button>
-        //         <button data-stack-id="marsrovers" type="button" class="btn btn-newscol btn-newscol-trash btn-icon" style="margin-top: -20px;">
-        //             <i class="ti-trash text-dark" style=""></i>
-        //         </button>
-        //     </div>
-        //     <div class="row" style="width: 100%; justify-content: center; margin: 0px; margin-top: 10px;">
-        //         <img src="" alt="" style="width: 100px; height: 100px;">
-        //     </div>
-        // // </div>
-    // </div> 
-
+    registerFeedItemButtonEventListeners()
 }
 
 function addLoadMoreItemToFeed(feedid) {
@@ -204,11 +188,47 @@ function updateNewsFeedContainers() {
     registerButtonEventListener();
 }
 
-function isItemBookmarked(feedid, feeditem) {
+function addItemToBookmarks(feedid, fuid) {
+    newsfeeds[feedid]["bookmarks"].push(fuid)
+}
+
+function removeItemFromBookmarks(feedid, fuid) {
+    newsfeeds[feedid]["bookmarks"] = newsfeeds[feedid]["bookmarks"].filter(function (item) {
+        return item != fuid;
+    });
+}
+
+function addItemToArchive(feedid, fuid) {
+    newsfeeds[feedid]["archive"].push(fuid)
+}
+
+function removeItemFromArchive(feedid, fuid) {
+    newsfeeds[feedid]["archive"] = newsfeeds[feedid]["archive"].filter(function (item) {
+        return item != fuid;
+    });
+}
+
+function isItemBookmarked(feedid, fuid) {
+    let bookmarks = newsfeeds[feedid]["bookmarks"]
+    
+    for (const item of bookmarks) {
+        if (item == fuid) {
+            return true;
+        }
+    }
+
     return false
 }
 
-function isItemArchived(feedid, feeditem) {
+function isItemArchived(feedid, fuid) {
+    let bookmarks = newsfeeds[feedid]["archive"]
+    
+    for (const item of bookmarks) {
+        if (item == fuid) {
+            return true;
+        }
+    }
+
     return false
 }
 
@@ -226,10 +246,10 @@ function updateNewsFeedsItems() {
 
         // add each item
         for (const feeditem of newsfeed) { 
-            if (isItemBookmarked(feedid, feeditem)) {
+            if (isItemBookmarked(feedid, feeditem.fuid)) {
                 addItemToFeedTab(feedid, feeditem, "tab-bookmarks-")
             }
-            else if (isItemArchived(feedid, feeditem)) {
+            else if (isItemArchived(feedid, feeditem.fuid)) {
                 addItemToFeedTab(feedid, feeditem, "tab-archive-")
             }
             else {
@@ -245,17 +265,21 @@ function updateNewsFeedsItems() {
 }
 
 function addNewFeed(feedtitle, feedid, feedkeywordstr, newssource) {
-    newsfeeds[feedid] = { "feedtitle": feedtitle, "feedkeywordstr": feedkeywordstr, "newssource": newssource, "feeditems": [] }
+    newsfeeds[feedid] = { "feedtitle": feedtitle, "feedkeywordstr": feedkeywordstr, "newssource": newssource, "feeditems": [], "bookmarks": [], "archive": []}
     saveSessionData();
     saveNSData();
 }
 
 function updateFeed(feedid, feedtitle, feedkeywordstr, newssource, feeditems = null) {
     var newfeeditems = newsfeeds[feedid]["feeditems"];
+    var newfeedbookmarks = newsfeeds[feedid]["bookmarks"];
+    var newfeedarchive = newsfeeds[feedid]["archive"];
+
     if (feeditems != null) {
         newfeeditems = feeditems;
     }
-    newsfeeds[feedid] = { "feedtitle": feedtitle, "feedkeywordstr": feedkeywordstr, "newssource": newssource, "feeditems": newfeeditems }
+
+    newsfeeds[feedid] = { "feedtitle": feedtitle, "feedkeywordstr": feedkeywordstr, "newssource": newssource, "feeditems": newfeeditems, "bookmarks": newfeedbookmarks, "archive": newfeedarchive }
     saveSessionData();
     saveNSData();
 }

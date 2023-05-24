@@ -77,18 +77,75 @@ $("#addnewsstackbtn").on("click", (event) => {
 
 });
 
+function registerFeedItemButtonEventListeners() {
+    // Register trash button click event listener
+    $(".btn-newsitem-archiv").on("click", (event) => {
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+        
+        const stackid = $(event.currentTarget).attr('data-stack-id');
+        const fuid = $(event.currentTarget).attr('data-fuid');
+
+        console.log("archiving", stackid, fuid);
+        // If in bookmarks then move to archive
+        if (isItemBookmarked(stackid, fuid)) {
+            console.log("move to archive");
+            // 1. Remove from bookmarks
+            removeItemFromBookmarks(stackid, fuid);
+            // 2. Add to archive
+            addItemToArchive(stackid, fuid);
+        }
+        // If in archive then move to news
+        else if (isItemArchived(stackid, fuid)) {
+            console.log("move to news");
+            // 1. Remove from archive
+            removeItemFromArchive(stackid, fuid);
+        }
+        // If in news then move to archive
+        else if (!isItemArchived(stackid, fuid)) {
+            console.log("move to archive");
+           // 1. Add to archive
+            addItemToArchive(stackid, fuid);
+        }
+
+        updateNewsFeedsItems();
+    });
+
+    $(".btn-newsitem-bookmark").on("click", (event) => {
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+
+        const stackid = $(event.currentTarget).attr('data-stack-id');
+        const fuid = $(event.currentTarget).attr('data-fuid');
+
+        // If in archive then move to bookmarks
+        if (isItemArchived(stackid, fuid)) {
+            // 1. Remove from archive
+            removeItemFromArchive(stackid, fuid);
+
+            // 2. Add to bookmarks
+            addItemToBookmarks(stackid, fuid);
+        }
+        // If in bookmarks then move to news
+        else if (isItemBookmarked(stackid, fuid)) {
+            // 1. Remove from bookmarks
+            removeItemFromBookmarks(stackid, fuid);
+        }
+        // If in news then move to bookmarks
+        else if (!isItemBookmarked(stackid, fuid)) {
+            // 1. Add to bookmarks
+            addItemToBookmarks(stackid, fuid);
+        }
+
+        updateNewsFeedsItems();
+    });
+}
+
 
 function registerButtonEventListener() {
 
-    // Register trash button click event listener
-    // Allows deleting stacks
-    $(".btn-newscol-trash").on("hover", (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-        event.stopImmediatePropagation();
-    });
+    // Allows deleting stacks 
     $(".btn-newscol-trash").on("click", (event) => {    
-        event.preventDefault();
         event.stopPropagation();
         event.stopImmediatePropagation();
         const stackid = $(event.currentTarget).attr('data-stack-id');
@@ -128,7 +185,6 @@ function registerButtonEventListener() {
     // Allows modifying stack settings
 
     $(".btn-newscol-settings").on("click", (event) => {
-        event.preventDefault();
         event.stopPropagation();
         event.stopImmediatePropagation();
         const stackid = $(event.currentTarget).attr('data-stack-id');
