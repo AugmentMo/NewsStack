@@ -82,7 +82,13 @@ function registerButtonEventListener() {
 
     // Register trash button click event listener
     // Allows deleting stacks
+    $(".btn-newscol-trash").on("hover", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+    });
     $(".btn-newscol-trash").on("click", (event) => {    
+        event.preventDefault();
         event.stopPropagation();
         event.stopImmediatePropagation();
         const stackid = $(event.currentTarget).attr('data-stack-id');
@@ -122,6 +128,7 @@ function registerButtonEventListener() {
     // Allows modifying stack settings
 
     $(".btn-newscol-settings").on("click", (event) => {
+        event.preventDefault();
         event.stopPropagation();
         event.stopImmediatePropagation();
         const stackid = $(event.currentTarget).attr('data-stack-id');

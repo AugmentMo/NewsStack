@@ -72,20 +72,39 @@ function addItemToFeedTab(feedid, item, tabidprefix) {
         pubdate.innerHTML = getFormattedDate(item.pubdate);
     }
 
-    // Image
-    const imageContainer = document.createElement('div');
-    imageContainer.classList.add('col');
-    imageContainer.classList.add('d-flex');
-    // imageContainer.classList.add('justify-content-end');
-    imageContainer.classList.add('align-self-center');
+    // Right container with image and top buttons
+    const rightContainer = document.createElement('div');
+    rightContainer.classList.add('col');
+    rightContainer.classList.add('d-flex');
+    rightContainer.style.paddingLeft = '0px';
+    var htmlstr = ''
+    var imghtml = ''
+
     if (item.imagesrc != undefined && item.imagesrc) {
-    imageContainer.innerHTML = '<img src="' + item.imagesrc + '" alt="' + item.title + '" style="width: 100px; height: 100px;">';
+        imghtml = '<img src="' + item.imagesrc + '" alt="' + item.title + '" style="">';
     }
 
-    const textContainer = document.createElement('div');
-    textContainer.classList.add('col');
-    textContainer.classList.add('col-lg-8');
+    htmlstr = `
+    <div class="col" style="height: 100%; padding-left: 0px;">
+        <div style="position: absolute; right: 20px; top: 22px; width: 90px; justify-content: end;" class="row">
+                <button data-stack-id="`+feedid+`" type="button" class="btn btn-newscol btn-newscol-settings btn-icon" style="display: inline-flex; width: 30px;">
+                    <i class="ti-bookmark text-dark"></i>
+                </button>
+                <button data-stack-id="`+feedid+`" type="button" class="btn btn-newscol btn-newscol-trash btn-icon" style="display: inline-flex; width: 30px;">
+                    <i class="ti-check text-dark" style=""></i>
+                </button>
+        </div>
+        <div class="row" style="width: 100%; justify-content: center; margin: 0px; margin-top: 10px;">
+                `+imghtml+`
+        </div>
+    </div>
+    `
 
+    rightContainer.innerHTML = htmlstr;
+
+    const leftContainer = document.createElement('div');
+    leftContainer.classList.add('col');
+    leftContainer.classList.add(( (item.imagesrc != undefined && item.imagesrc) ? 'col-lg-8' : 'col-lg-10'));
 
     const cardBodyElement = document.createElement('div');
     cardBodyElement.classList.add('card-body');
@@ -95,26 +114,45 @@ function addItemToFeedTab(feedid, item, tabidprefix) {
     // cardBodyElement.appendChild(url);
     cardBodyElement.appendChild(pubdate);
 
-    textContainer.appendChild(cardBodyElement);
+    leftContainer.appendChild(cardBodyElement);
 
     const rowElement = document.createElement('div');
     rowElement.classList.add('row');
     rowElement.classList.add('justify-content-between');
 
 
-    const feedElement = document.createElement('a');
-    feedElement.target = '_blank';
+    const feedElement = document.createElement('div');
     feedElement.classList.add('card');
     feedElement.classList.add('mt-2');
     feedElement.classList.add('feeditem');
-    if (item.linkurl) {
-        feedElement.href = item.linkurl;
-    }
 
-    rowElement.appendChild(textContainer);
-    rowElement.appendChild(imageContainer);
+
+    rowElement.appendChild(leftContainer);
+    rowElement.appendChild(rightContainer);
     feedElement.appendChild(rowElement);
+    feedElement.addEventListener("click", function() {
+        if (item.linkurl) {
+            window.open(item.linkurl, "_blank");
+        }
+      });
     container.appendChild(feedElement);
+
+    // <div class="col d-flex" style="">
+        // <div class="col" style="height: 100%;">
+        //     <div style="justify-content: end; margin-right: 0px; margin-top: -10px;" class="row">
+        //         <button data-stack-id="marsrovers" type="button" class="btn btn-newscol btn-newscol-settings btn-icon" style="margin-top: -20px;">
+        //             <i class="ti-settings text-dark"></i>
+        //         </button>
+        //         <button data-stack-id="marsrovers" type="button" class="btn btn-newscol btn-newscol-trash btn-icon" style="margin-top: -20px;">
+        //             <i class="ti-trash text-dark" style=""></i>
+        //         </button>
+        //     </div>
+        //     <div class="row" style="width: 100%; justify-content: center; margin: 0px; margin-top: 10px;">
+        //         <img src="" alt="" style="width: 100px; height: 100px;">
+        //     </div>
+        // // </div>
+    // </div> 
+
 }
 
 function addLoadMoreItemToFeed(feedid) {
