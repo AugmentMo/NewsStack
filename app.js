@@ -8,7 +8,7 @@ const https = require('https');
 const http = require('http');
 const fs = require('fs');
 var Mixpanel = require('mixpanel');
-var mixpanel = Mixpanel.init('50c39f0643d7aedd6aec85435b9a48d9');
+var mixpanel = Mixpanel.init(process.env.MIXPANEL_TOKEN);
 
 const httpsoptions = {
     key: fs.readFileSync('/app/sslcerts/privkey.pem'),
