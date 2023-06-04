@@ -8,30 +8,58 @@ const https = require('https');
 const http = require('http');
 const fs = require('fs');
 var Mixpanel = require('mixpanel');
-var mixpanel = Mixpanel.init(process.env.MIXPANEL_TOKEN);
+const { auth } = require('express-openid-connect');
 
-const httpsoptions = {
-    key: fs.readFileSync('/app/sslcerts/privkey.pem'),
-    cert: fs.readFileSync('/app/sslcerts/fullchain.pem')
-};
-
-const httpsServer = https.createServer(httpsoptions, app);
-const { Server } = require("socket.io");
-const io = new Server(httpsServer);
+// Load environment variables from .env file
 require('dotenv').config();
 
-// Auth0
-const { auth, requiresAuth } = require('express-openid-connect');
-const e = require('express');
-const auth0_config = {
-    authRequired: false,
-    auth0Logout: true,
-    secret: process.env.AUTH0_CLIENT_SECRET,
-    baseURL: process.env.AUTH0_BASE_URL,
-    clientID: process.env.AUTH0_CLIENT_ID,
-    issuerBaseURL: process.env.AUTH0_DOMAIN
-  };
-app.use(auth(auth0_config));
+// Enable features depending on available .env file settings
+const USE_MIXPANEL = (process.env.MIXPANEL_TOKEN != undefined)
+const USE_HTTPS = (process.env.SSL_KEY_FILEPATH != undefined && process.env.SSL_CERT_FILEPATH != undefined)
+const USE_AUTH0 = (process.env.AUTH0_CLIENT_SECRET != undefined && 
+    process.env.AUTH0_BASE_URL != undefined && 
+    process.env.AUTH0_CLIENT_ID != undefined && 
+    process.env.AUTH0_DOMAIN != undefined)
+    
+console.log("Using features:", (USE_MIXPANEL ? "MIXPANEL" : ""), (USE_HTTPS ? "HTTPS" : ""), (USE_AUTH0 ? "AUTH0" : ""), "MONGODB");
+
+
+// Configure Mixpanel
+var mixpanel = undefined;
+
+if (USE_MIXPANEL) {
+    mixpanel = Mixpanel.init(process.env.MIXPANEL_TOKEN);
+}
+
+// Configure http/s server
+var webServer = undefined;
+if (USE_HTTPS) {
+    const httpsoptions = {
+        key: fs.readFileSync(process.env.SSL_KEY_FILEPATH),
+        cert: fs.readFileSync(process.env.SSL_CERT_FILEPATH)
+    };
+
+    webServer = https.createServer(httpsoptions, app);
+}
+else {
+    // Use classic http server
+    webServer = http.createServer(app);
+}
+const { Server } = require("socket.io");
+const io = new Server(webServer);
+
+// Configure Auth0
+if (USE_AUTH0) {
+    const auth0_config = {
+        authRequired: false,
+        auth0Logout: true,
+        secret: process.env.AUTH0_CLIENT_SECRET,
+        baseURL: process.env.AUTH0_BASE_URL,
+        clientID: process.env.AUTH0_CLIENT_ID,
+        issuerBaseURL: process.env.AUTH0_DOMAIN
+    };
+    app.use(auth(auth0_config));
+}
 
 // Clean up string
 function cleanUpString(string) {
@@ -99,7 +127,10 @@ io.on("connection", (socket) => {
         if (sid){
             removeUserSession(sid);
         }
-        mixpanel.track('Disconnect', {'distinct_id': (sid ? sid : "unknwn")});
+
+        if (USE_MIXPANEL) {
+            mixpanel.track('Disconnect', { 'distinct_id': (sid ? sid : "unknwn") });
+        }
     });
     
     // Newsstacks data get request
@@ -156,7 +187,10 @@ io.on("connection", (socket) => {
 
         if (isNsDataValidated(feedbackdata)) {
             feedbackdata['distinct_id'] = (sid ? sid : "unknwn");
-            mixpanel.track('Feedback', feedbackdata);
+
+            if (USE_MIXPANEL) {
+                mixpanel.track('Feedback', feedbackdata);
+            }
         }
     });
 });
@@ -172,14 +206,19 @@ app.get('/', (req, res) => {
 app.get('/logoutusersession', (req, res) => {
     console.log("User logging out.");
 
-    removeUserSession(req.oidc.user.sid);
-    mixpanel.track('Logout', { 'distinct_id': (req.oidc.user.sid ? req.oidc.user.sid : "unknwn") });
-    
+    if (req.oidc){
+        removeUserSession(req.oidc.user.sid);
+        
+        if (USE_MIXPANEL) {
+            mixpanel.track('Logout', { 'distinct_id': (req.oidc.user.sid ? req.oidc.user.sid : "unknwn") });
+        }
+    }
+
     res.redirect('/logout');
 });
 
 app.get('/usersession', async (req, res) => {
-    if (req.oidc.isAuthenticated()) {
+    if (req.oidc && req.oidc.isAuthenticated()) {
         const sid = req.oidc.user.sid;
         const sub = req.oidc.user.sub;
 
@@ -193,7 +232,9 @@ app.get('/usersession', async (req, res) => {
                 res.send({ loggedin: true, sid: sid, req_ns_data : true });
             });
 
-            mixpanel.track('User Created', {'distinct_id': sid});
+            if (USE_MIXPANEL) {
+                mixpanel.track('User Created', { 'distinct_id': sid });
+            }
         }
         else {
             updateUserData(sub, req.oidc.user).then(() => {
@@ -201,27 +242,42 @@ app.get('/usersession', async (req, res) => {
             }).finally(() => {
                 res.send({ loggedin: true, sid: sid, req_ns_data : false });
             })
-            mixpanel.track('Visit', { 'distinct_id': sid});
-            mixpanel.track('Login', {'distinct_id': sid});
+
+            if (USE_MIXPANEL) {
+                mixpanel.track('Visit', { 'distinct_id': sid });
+                mixpanel.track('Login', { 'distinct_id': sid });
+            }
         }
 
     }
     else {
         res.send({ loggedin: false, sid: "", req_ns_data: false });
-        mixpanel.track('Visit', { 'distinct_id': "unknwn"});
+
+        if (USE_MIXPANEL) {
+            mixpanel.track('Visit', { 'distinct_id': "unknwn" });
+        }
     }
 });
 
 // Start the server
-httpsServer.listen(443, () => {
-    console.log('HTTPS server started on port 443');
-});
+if (USE_HTTPS) {
+    // Start HTTPS server and redirect http traffic to https
+    webServer.listen(443, () => {
+        console.log('HTTPS server started on port 443');
+    });
   
-// Redirect HTTP to HTTPS
-const httpServer = express();
-httpServer.get('*', (req, res) => {
-    res.redirect('https://' + req.headers.host + req.url);
-});
-httpServer.listen(80, () => {
-    console.log('HTTP server started on port 80');
-});
+    // Redirect HTTP to HTTPS
+    const httpServer = express();
+    httpServer.get('*', (req, res) => {
+        res.redirect('https://' + req.headers.host + req.url);
+    });
+    httpServer.listen(80, () => {
+        console.log('HTTP server started on port 80');
+    });
+}
+else {
+    // Start HTTP server
+    webServer.listen(80, () => {
+        console.log('HTTP server started on port 80');
+    });
+}
