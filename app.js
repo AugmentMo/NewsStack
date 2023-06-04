@@ -193,6 +193,9 @@ io.on("connection", (socket) => {
             }
         }
     });
+
+    // Send mixpanel token if existing
+    socket.emit("mixpanel_token", process.env.MIXPANEL_TOKEN);
 });
 
 // Serve static files from the "public" directory

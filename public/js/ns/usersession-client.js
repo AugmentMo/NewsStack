@@ -121,3 +121,10 @@ socket.on('userdata', (data) => {
   $('#userprofilename').text(userdata.username); 
   $('#userprofileemail').text(userdata.useremail);
 });
+
+// load user data
+socket.on('mixpanel_token', (data) => {
+  if (data != undefined) {
+    initMixpanel(data);
+  }
+});
