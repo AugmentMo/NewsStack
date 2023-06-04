@@ -18,10 +18,11 @@ function isMongoDBConnected() {
     return mongodbconnected;
 }
 
-function connectMongoDB() {
+async function connectMongoDB() {
     try {
+        console.log("Trying to connect to MongoDB", mongodbUri, "..")
         // Connect to the MongoDB server
-        mongodbClient.connect();
+        await mongodbClient.connect();
     
         // Get a reference to the "newsstack" database
         const db = mongodbClient.db(dbName);
@@ -30,7 +31,7 @@ function connectMongoDB() {
         userscollection = db.collection('users');
         mongodbconnected = true;
 
-        console.log("Connected to MongoDB", mongodbUri)
+        console.log("Successfully connected to MongoDB", mongodbUri)
     } catch (error) {
         console.error("ERROR: Could not connect to MongoDB", mongodbUri, dbName, error)
         mongodbconnected = false;
