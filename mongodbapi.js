@@ -1,7 +1,10 @@
 const { MongoClient } = require('mongodb');
 
 // Connection URI for MongoDB
-const mongodbUri = 'mongodb://172.31.95.32:27017';
+var mongodbUri = 'mongodb://localhost:27017'
+if (process.env.MONGODB_URI != undefined) {
+    mongodbUri = process.env.MONGODB_URI;
+}
 
 // Database name
 const dbName = 'newsstack';
