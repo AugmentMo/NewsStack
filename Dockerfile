@@ -9,6 +9,13 @@ RUN mkdir -p /app/sslcerts
 # Copy package.json and package-lock.json to the container
 COPY package*.json ./
 
+# Add essential tools
+RUN apk update
+RUN apk add python3
+RUN apk add make
+RUN apk add g++
+RUN apk add vips-dev
+
 # Install dependencies
 RUN npm install
 
