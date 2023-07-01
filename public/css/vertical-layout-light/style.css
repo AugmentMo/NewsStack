@@ -30699,3 +30699,39 @@ div.tagsinput span.tag a {
   background: gray !important;
 }
 
+/* Custom Scroll Bar */
+/* width */
+::-webkit-scrollbar {
+  width: 15px;
+  position: fixed; /* This property fixes the scrollbar position */
+  top: 0; /* This property moves the scrollbar to the top */
+
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: transparent; 
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #000; 
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555; 
+}
+
+.custom-scroller { border: none 0px RED; overflow-x: scroll; overflow-y:hidden;}
+.custom-scroller{height: 10px; margin-bottom: 25px}
+.custom-scroller-content {
+  height: 10px; 
+  margin-right: -15px;
+  margin-left: -15px;
+  overflow: auto;
+  display: block;
+  }
+
+  
+  
