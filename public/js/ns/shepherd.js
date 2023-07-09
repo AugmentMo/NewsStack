@@ -1,3 +1,5 @@
+const isNavTogglerVisible = $('.navbar-toggler').is(':visible');
+
 const tour = new Shepherd.Tour({
     useModalOverlay: true,
     debug: true,  
@@ -60,7 +62,7 @@ const tour = new Shepherd.Tour({
     title: 'Welcome to NewsStack! (3/4)',
     text: `Create new stacks to specify and follow as many topics as you want.`,
     attachTo: {
-      element: '#addnewsstackbtn',
+      element: (isNavTogglerVisible() ? '.navbar-toggler' : '#addnewsstackbtn'),
       on: 'left'
     },
     buttons: [
@@ -85,7 +87,7 @@ const tour = new Shepherd.Tour({
     title: 'Welcome to NewsStack! (4/4)',
     text: `Sign up and login to save your news stacks and access them from any device.`,
     attachTo: {
-      element: '#loginbtn',
+      element: (isNavTogglerVisible() ? '.navbar-toggler' : '#loginbtn'),
       on: 'left'
     },
     buttons: [
