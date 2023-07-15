@@ -4,7 +4,7 @@ var consumeArtificialEvent = 0;
 
 function anchorScrolling() {
   let width = window.outerWidth;
-  let offset = -30;
+  let offset = 15;
 
   if (width <= 767){
     if (stoppedScrolling && !isInputDown()){
@@ -13,7 +13,7 @@ function anchorScrolling() {
       const scrollLeft = scrollEl.scrollLeft();
 
       // round scroll position to nearest 100px increment
-      const roundedScrollLeft = Math.round(scrollLeft / (width+offset)) * (width+offset);
+      const roundedScrollLeft = -2*offset + Math.round(scrollLeft / (width-offset)) * (width-offset);
 
       // set new scroll position
       if (scrollLeft < roundedScrollLeft) {
