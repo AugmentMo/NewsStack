@@ -104,7 +104,7 @@ function addItemToFeedTab(feedid, item, tabidprefix) {
 
     const leftContainer = document.createElement('div');
     leftContainer.classList.add('col');
-    leftContainer.classList.add(( (item.imagesrc != undefined && item.imagesrc) ? 'col-lg-8' : 'col-lg-10'));
+    leftContainer.classList.add(( (item.imagesrc != undefined && item.imagesrc) ? 'col-cust-img' : 'col-cust-noimg'));
 
     const cardBodyElement = document.createElement('div');
     cardBodyElement.classList.add('card-body');

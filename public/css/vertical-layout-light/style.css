@@ -28458,6 +28458,35 @@ div.tagsinput span.tag a {
   cursor: pointer;
 }
 
+
+@media (max-width: 767px) {
+  .feedcolumn {
+    display: inline-block;
+    width: 100%;
+    max-width: 100%;
+    min-width: 100%;
+  }
+
+  .feeditem {
+    width: 100%;
+    white-space: pre-wrap;
+    color: black;
+    transition: all .1s ease-in-out; 
+    cursor: pointer;
+  }
+}
+
+
+.col-cust-img {
+  flex: 0 0 66.66667%;
+  max-width: 66.66667%;
+}
+
+.col-cust-noimg {
+  flex: 0 0 83.33333%;
+  max-width: 83.33333%;
+}
+
 .feeditem:hover {
   color: black;
   /* text-decoration: underline; */
