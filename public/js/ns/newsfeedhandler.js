@@ -339,24 +339,26 @@ function addNewFeedItem(item) {
 function updateFeedItem(feedItem) {
     console.log("updating feed item", feedItem)
     const feedid = feedItem.feedid;
-    let feedItemsArray = newsfeeds[feedid]["feeditems"];
     
-    // Check if the feed item already exists in the feed items array
-    var existingFeedItemIndex = feedItemsArray.findIndex(function(item) {
-        return item.itemnumber === feedItem.itemnumber;
-    });
+    if (newsfeeds.hasOwnProperty(feedid)) {
+        let feedItemsArray = newsfeeds[feedid]["feeditems"];
     
-    if (existingFeedItemIndex !== -1) {
-        console.log("FOUND and UPDATING", existingFeedItemIndex)
-        // If the feed item already exists, update its values
-        feedItemsArray[existingFeedItemIndex] = feedItem;
-    } else {
-        console.log("NOT FOUND and CREATING")
+        // Check if the feed item already exists in the feed items array
+        var existingFeedItemIndex = feedItemsArray.findIndex(function (item) {
+            return item.itemnumber === feedItem.itemnumber;
+        });
+    
+        if (existingFeedItemIndex !== -1) {
+            console.log("FOUND and UPDATING", existingFeedItemIndex)
+            // If the feed item already exists, update its values
+            feedItemsArray[existingFeedItemIndex] = feedItem;
+        } else {
+            console.log("NOT FOUND and CREATING")
 
-        // If the feed item does not exist, add it as a new element
-        feedItemsArray.push(feedItem);
+            // If the feed item does not exist, add it as a new element
+            feedItemsArray.push(feedItem);
+        }
     }
-      
 }
 
 function requestNewsFeed(feedid) {
