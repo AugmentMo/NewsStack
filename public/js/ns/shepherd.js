@@ -15,7 +15,7 @@ const tour = new Shepherd.Tour({
   });
   
   tour.addStep({
-    title: 'Welcome to NewsStack! (1/4)',
+    title: 'Welcome to NewsStack! (1/6)',
     text: `This is a news stack. News stacks display articles related to a specified topic. To read a full article, click on it.`,
     attachTo: {
       element: '.feedcolumn:first-child',
@@ -34,7 +34,7 @@ const tour = new Shepherd.Tour({
   });
   
   tour.addStep({
-    title: 'Welcome to NewsStack! (2/4)',
+    title: 'Welcome to NewsStack! (2/6)',
     text: `You can change the topic or delete stacks using the buttons on the top.`,
     attachTo: {
       element: '.feedcolumn:first-child > div:nth-child(1) > div',
@@ -57,9 +57,60 @@ const tour = new Shepherd.Tour({
     ],
     id: 'creating'
   });
+  
+tour.addStep({
+  title: 'Welcome to NewsStack! (3/6)',
+  text: `Use the buttons on the top right of a news item to bookmark it or tick it as read and remove it from the list.`,
+  attachTo: {
+    element: ".feedcolumn:first-child > div.tab-content.p-0.border-0 > div.tab-pane.fade.show.active > div:nth-child(1) > div > div.col.d-flex > div > div:nth-child(1)",
+    on: 'right'
+  },
+  buttons: [
+    {
+      action() {
+        return this.back();
+      },
+      classes: 'shepherd-button-secondary',
+      text: 'Back'
+    },
+    {
+      action() {
+        return this.next();
+      },
+      text: 'Next'
+    }
+  ],
+  id: 'creating'
+});
+
+  
+tour.addStep({
+  title: 'Welcome to NewsStack! (4/6)',
+  text: `You can access your bookmarks and read articles anytime by using the tab bar at the top.`,
+  attachTo: {
+    element: '.feedcolumn:first-child > ul',
+    on: 'right'
+  },
+  buttons: [
+    {
+      action() {
+        return this.back();
+      },
+      classes: 'shepherd-button-secondary',
+      text: 'Back'
+    },
+    {
+      action() {
+        return this.next();
+      },
+      text: 'Next'
+    }
+  ],
+  id: 'creating'
+});
 
   tour.addStep({
-    title: 'Welcome to NewsStack! (3/4)',
+    title: 'Welcome to NewsStack! (3/6)',
     text: `Create new stacks to specify and follow as many topics as you want.`,
     attachTo: {
       element: (isNavTogglerVisible ? '.navbar-toggler' : '#addnewsstackbtn'),
@@ -84,7 +135,7 @@ const tour = new Shepherd.Tour({
   });
 
   tour.addStep({
-    title: 'Welcome to NewsStack! (4/4)',
+    title: 'Welcome to NewsStack! (4/6)',
     text: `Sign up and login to save your news stacks and access them from any device.`,
     attachTo: {
       element: (isNavTogglerVisible ? '.navbar-toggler' : '#loginbtn'),
