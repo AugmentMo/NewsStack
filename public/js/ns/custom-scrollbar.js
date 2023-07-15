@@ -13,7 +13,7 @@ function anchorScrolling() {
       const scrollLeft = scrollEl.scrollLeft();
 
       // round scroll position to nearest 100px increment
-      const roundedScrollLeft = -2*offset + Math.round(scrollLeft / (width-offset)) * (width-offset);
+      const roundedScrollLeft = ( isNavTogglerVisible ? -2*offset : +2*offset) + Math.round(scrollLeft / (width-offset)) * (width-offset);
 
       // set new scroll position
       if (scrollLeft < roundedScrollLeft) {
