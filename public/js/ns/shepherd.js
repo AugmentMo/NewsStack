@@ -151,12 +151,34 @@ tour.addStep({
         action() {
           return this.next();
         },
-        text: 'Finish'
+        text: (isNavTogglerVisible ? 'Next' : 'Finish')
       }
     ],
     id: 'creating'
   });
   
+  if (isNavTogglerVisible){
+  tour.addStep({
+    title: 'Welcome to NewsStack!',
+    text: `Scroll to the right to see your other News Stacks.`,
+    buttons: [
+      {
+        action() {
+          return this.back();
+        },
+        classes: 'shepherd-button-secondary',
+        text: 'Back'
+      },
+      {
+        action() {
+          return this.next();
+        },
+        text: 'Finish'
+      }
+    ],
+    id: 'creating'
+  });
+  }
 
 function startOnboardingTour() {
     var tourcompleted = getCookie("onboarding_tour_v0.01");
