@@ -12,7 +12,7 @@
     "url": "newsstack"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "crypto": "^1.0.1",
     "dotenv": "^16.0.3",
