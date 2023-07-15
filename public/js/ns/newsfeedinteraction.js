@@ -36,7 +36,7 @@ $("#addnewsstackbtn").on("click", (event) => {
         
             $('#keyword-string').attr('title', '<strong>Search String Tips:</strong><br><br><ul><li>Enter keywords sparated by whitespaces.</li><li>Use <strong>+keyword</strong> to force including a keyword.</li><li>Use <strong>-keyword</strong> to exclude a keyword.</li><li>Use <strong>site:website.com</strong> to only include a certain website.</li></ul>');
             $('#keyword-string').tooltip({ html: true, placement: 'right' });
-            if (!isNavTogglerVisible()){
+            if (!isNavTogglerVisible){
                 setTimeout(() => {
                     $('#keyword-string').tooltip("show");    
                 }, 500);
