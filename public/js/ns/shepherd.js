@@ -110,7 +110,7 @@ tour.addStep({
 });
 
   tour.addStep({
-    title: 'Welcome to NewsStack! (3/6)',
+    title: 'Welcome to NewsStack! (5/6)',
     text: `Create new stacks to specify and follow as many topics as you want.`,
     attachTo: {
       element: (isNavTogglerVisible ? '.navbar-toggler' : '#addnewsstackbtn'),
@@ -135,7 +135,7 @@ tour.addStep({
   });
 
   tour.addStep({
-    title: 'Welcome to NewsStack! (4/6)',
+    title: 'Welcome to NewsStack! (6/6)',
     text: `Sign up and login to save your news stacks and access them from any device.`,
     attachTo: {
       element: (isNavTogglerVisible ? '.navbar-toggler' : '#loginbtn'),
