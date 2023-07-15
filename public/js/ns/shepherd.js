@@ -20,7 +20,7 @@ const tour = new Shepherd.Tour({
     attachTo: {
       element: '.feedcolumn:first-child',
         on: 'right-start',
-        vertical: 'top' 
+        vertical: (isNavTogglerVisible ? 'bottom' : 'top')
     },
     buttons: [
       {
@@ -38,7 +38,7 @@ const tour = new Shepherd.Tour({
     text: `You can change the topic or delete stacks using the buttons on the top.`,
     attachTo: {
       element: '.feedcolumn:first-child > div:nth-child(1) > div',
-      on: 'right'
+      on: (isNavTogglerVisible ? 'bottom' : 'right')
     },
     buttons: [
       {
@@ -63,7 +63,7 @@ tour.addStep({
   text: `Use the buttons on the top right of a news item to bookmark it or tick it as read and remove it from the list.`,
   attachTo: {
     element: ".feedcolumn:first-child > div.tab-content.p-0.border-0 > div.tab-pane.fade.show.active > div:nth-child(1) > div > div.col.d-flex > div > div:nth-child(1)",
-    on: 'right'
+    on: (isNavTogglerVisible ? 'bottom' : 'right')
   },
   buttons: [
     {
@@ -89,7 +89,7 @@ tour.addStep({
   text: `You can access your bookmarks and read articles anytime by using the tab bar at the top.`,
   attachTo: {
     element: '.feedcolumn:first-child > ul',
-    on: 'right'
+    on: (isNavTogglerVisible ? 'bottom' : 'right')
   },
   buttons: [
     {
@@ -114,7 +114,7 @@ tour.addStep({
     text: `Create new stacks to specify and follow as many topics as you want.`,
     attachTo: {
       element: (isNavTogglerVisible ? '.navbar-toggler' : '#addnewsstackbtn'),
-      on: 'left'
+      on: (isNavTogglerVisible ? 'bottom' : 'left')
     },
     buttons: [
         {
