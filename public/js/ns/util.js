@@ -1,3 +1,5 @@
+const isNavTogglerVisible = $('.navbar-toggler').is(':visible');
+
 function generateRandomString(length) {
     let result = '';
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';

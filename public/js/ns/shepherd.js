@@ -1,5 +1,3 @@
-const isNavTogglerVisible = $('.navbar-toggler').is(':visible');
-
 const tour = new Shepherd.Tour({
     useModalOverlay: true,
     debug: true,  
