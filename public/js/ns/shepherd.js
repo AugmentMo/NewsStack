@@ -173,7 +173,7 @@ function startOnboardingTour() {
 }
 
 // Check if the device is not mobile
-if (!(/Mobi|Android/i.test(navigator.userAgent))) {
+// if (!(/Mobi|Android/i.test(navigator.userAgent))) {
   // Call the function on non-mobile devices
   startOnboardingTour();
-}
+// }
