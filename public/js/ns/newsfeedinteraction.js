@@ -175,6 +175,7 @@ function registerButtonEventListener() {
             callback: function() {
                 console.log('Deleting '+stackid);
                 deleteFeed(stackid);
+                updateNewsFeedsItems();
             }
             }
             }
