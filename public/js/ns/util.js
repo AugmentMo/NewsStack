@@ -33,3 +33,35 @@ function getCookie(cookieName) {
   }
   return "";
 }
+
+
+let activeInputs = new Set();
+
+document.addEventListener("keydown", function(event) {
+  activeInputs.add(event.key);
+});
+
+document.addEventListener("keyup", function(event) {
+  activeInputs.delete(event.key);
+});
+
+document.addEventListener("mousedown", function(event) {
+  activeInputs.add("mouse");
+});
+
+document.addEventListener("mouseup", function(event) {
+  activeInputs.delete("mouse");
+});
+
+document.addEventListener("touchstart", function(event) {
+  activeInputs.add("touch");
+});
+
+document.addEventListener("touchend", function(event) {
+  activeInputs.delete("touch");
+});
+
+
+function isInputDown() {
+  return activeInputs.size > 0;
+}
